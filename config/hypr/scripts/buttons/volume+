@@ -1,9 +1,0 @@
-#!/usr/bin/env sh
-
-if ! [ -x "$(command -v pamixer)" ]; then
-  notify-send "pamixer not found"
-  exit 1
-fi
-
-pamixer -i 5
-notify-send "$(pamixer --get-volume)"

@@ -1,0 +1,29 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = true
+
+format = """
+[](#87d6bc)$directory[](#87d6bc) """
+
+right_format = """$character [](fg:#a8cbe2)$cmd_duration[](fg:#a8cbe2)"""
+
+[cmd_duration]
+min_time = 0
+format = "[$duration](bg:#a8cbe2 fg:#0d3446)"
+
+[character]
+format = "$symbol"
+success_symbol = ""
+error_symbol = "[](fg:#ffb4ab)[](fg:#ffb4ab)"
+
+
+
+[fill]
+symbol = ''
+style = 'bold fg:#87d6bc'
+
+[directory]
+style = "bg:#87d6bc fg:#00382b"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"

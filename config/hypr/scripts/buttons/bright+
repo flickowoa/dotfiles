@@ -1,9 +1,0 @@
-#!/usr/bin/env sh
-
-if ! [ -x "$(command -v light)" ]; then
-  notify-send "light not found"
-  exit 1
-fi
-
-light -A 5
-notify-send "$(light -G)"
