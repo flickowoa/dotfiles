@@ -1,0 +1,21 @@
+name = "dreamy"
+desc = "clouds"
+version = "0.1.0"
+author = "flickowoa"
+repo = "https://github.com/flickowoa/dotfiles"
+branch = "dreamy_v2"
+enabled = true
+module = []
+
+[theme]
+config = "theme.conf"
+load = "load.sh"
+unload = "unload.sh"
+
+# [[link]]
+# from = "quickshell/shell/starship.toml"
+# to = "~/.config/starship.toml"
+
+# [[link]]
+# from = "quickshell/shell/fish/zephyr.fish"
+# to = "~/.config/fish/conf.d/zephyr.fish"
