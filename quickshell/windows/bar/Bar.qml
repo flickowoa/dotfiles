@@ -18,7 +18,7 @@ PanelWindow {
 
     color: "transparent"
 
-    height: Config.barHeight + Config.barVMargin
+    height: Config.barHeight + Config.barVMargin + 15
 
     anchors {
         top: true
@@ -30,10 +30,13 @@ PanelWindow {
         id: bar
 
         anchors {
-            fill: parent
+            // fill: parent
             leftMargin: Config.barHMargin
             rightMargin: Config.barHMargin
             topMargin: Config.barVMargin
+            top: parent.top
+            left: parent.left
+            right: parent.right
         }
 
         RowLayout {
