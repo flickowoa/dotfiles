@@ -41,16 +41,17 @@ Rectangle {
 
     ShaderEffectSource {
         id: cava
-        // visible: false
+        visible: false
         height: Config.pillHeight
         width: Config.pillWidth * 4
+        mipmap: true
         anchors {
             horizontalCenter: parent.horizontalCenter
         }
         sourceItem: contentwrap
-        live: true
+        // live: true
         wrapMode: ShaderEffectSource.ClampToEdge
-        hideSource: true
+        // hideSource: true
     }
     Item {
         id: contentwrap
@@ -75,7 +76,7 @@ Rectangle {
             implicitWidth: content.width
             implicitHeight: Config.pillHeight * 0.5
 
-            radius: 50
+            radius: content.radius
 
             layer.enabled: true
 
@@ -84,8 +85,10 @@ Rectangle {
                 // visible: false
                 color: "white"
 
+                // radius: 0
+
                 y: 0
-                width: childrenRect.width ? childrenRect.width + Config.pillHPadding : Config.pillWidth * 4
+                width: childrenRect.width ? childrenRect.width + Config.pillHPadding : Config.pillWidth * 4 + 5
                 height: Config.pillHeight
 
                 anchors {
