@@ -9,8 +9,12 @@ import "root:"
 
 Rectangle {
     id: island
-    height: Config.pillHeight
-    width: Config.pillWidth * 4 + 20
+
+    property int pillWidth: Config.pillWidth * 6
+    property int pillHeight: Config.pillHeight
+
+    height: pillHeight
+    width: pillWidth + 20
 
     color: "transparent"
 
@@ -24,26 +28,26 @@ Rectangle {
         radius: 30
         samples: 16
         anchors.centerIn: parent
-        height: Config.pillHeight
-        width: Config.pillWidth * 4
+        height: pillHeight
+        width: pillWidth
         transparentBorder: true
     }
 
     BrightnessContrast {
         id: bright
         anchors.centerIn: parent
-        height: Config.pillHeight
-        width: Config.pillWidth * 4
+        height: pillHeight
+        width: pillWidth
         source: cava
-        brightness: 0.5
+        brightness: -0.5
         contrast: 1
     }
 
     ShaderEffectSource {
         id: cava
         visible: false
-        height: Config.pillHeight
-        width: Config.pillWidth * 4
+        height: pillHeight
+        width: pillWidth
         mipmap: true
         anchors {
             horizontalCenter: parent.horizontalCenter
@@ -53,12 +57,13 @@ Rectangle {
         wrapMode: ShaderEffectSource.ClampToEdge
         // hideSource: true
     }
+
     Item {
         id: contentwrap
         // visible: false
         anchors.centerIn: parent
-        width: Config.pillWidth * 4
-        height: Config.pillHeight
+        width: pillWidth
+        height: pillHeight
 
         ClippingRectangle {
             id: contentclip
@@ -70,11 +75,11 @@ Rectangle {
                 verticalCenter: parent.verticalCenter
             }
 
-            width: Config.pillWidth * 4
-            height: Config.pillHeight
+            width: pillWidth
+            height: pillHeight
 
-            implicitWidth: content.width
-            implicitHeight: Config.pillHeight * 0.5
+            // implicitWidth: content.width
+            // implicitHeight: pillHeight
 
             radius: content.radius
 
@@ -83,13 +88,13 @@ Rectangle {
             Pill {
                 id: content
                 // visible: false
-                color: "white"
+                color: "black"
 
                 // radius: 0
 
                 y: 0
-                width: childrenRect.width ? childrenRect.width + Config.pillHPadding : Config.pillWidth * 4 + 5
-                height: Config.pillHeight
+                width: pillWidth
+                height: pillHeight
 
                 anchors {
                     horizontalCenter: parent.horizontalCenter
@@ -102,13 +107,14 @@ Rectangle {
                     property int gwidth: parent.width
 
                     property real treshold: 0
+                    property real strength: 5
 
-                    property real pointA_x: 10
-                    property real pointA_y: 10
-                    property real pointB_x: 0
-                    property real pointB_y: 0
-                    property real pointC_x: 0
-                    property real pointC_y: 0
+                    property real pointA_x: 0
+                    property real pointA_y: gheight / 2
+                    property real pointB_x: gwidth / 2
+                    property real pointB_y: gheight / 2
+                    property real pointC_x: gwidth
+                    property real pointC_y: gheight / 2
 
                     property real pointA_vx: 0
                     property real pointA_vy: 0
@@ -125,14 +131,6 @@ Rectangle {
 
                     fragmentShader: "root:shaders/pill.frag.qsb"
 
-                    NumberAnimation on t {
-                        from: 0
-                        to: 0.5
-                        duration: 1000
-                        loops: Animation.Infinite
-                        running: true
-                    }
-
                     function distance(x1, y1, x2, y2) {
                         return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
                     }
@@ -144,9 +142,11 @@ Rectangle {
 
                             let avg_t = Cava.values.reduce((a, b) => a + b, 0) / Cava.values.length;
 
-                            blur.radius = 30 * avg_t;
-                            blur.samples = 16 * avg_t;
-                            bright.brightness = 0.5 + 0.5 * avg_t;
+                            strength = 5 - 3 * avg_t;
+                            blur.radius = 50 * avg_t;
+                            blur.samples = 16 + 16 * (1 - avg_t);
+                            bright.brightness = -0.5 + 1 * avg_t;
+                            bright.contrast = 0.5 + 0.5 * avg_t;
 
                             points.forEach(function (point, index) {
                                 let x = point[0];
@@ -162,51 +162,69 @@ Rectangle {
 
                                 let t = Cava.values[index];
 
-                                vx += gwidth * (Math.random() - 0.5);
-                                vy += gheight * (Math.random() - 0.5);
+                                // vx += -25 * avg_t;
 
-                                vx *= 0.999 * t;
-                                vy *= 0.999 * t;
+                                vx += (gwidth / 2) * (Math.random() - 0.5);
+                                vy += (gheight / 2) * (Math.random() - 0.5);
 
-                                vx += dcx * 0.01;
-                                vy += dcy * 0.01;
+                                // vx += dcx * 0.01;
+                                // vy += dcy * 0.01;
+
+                                // if (x < 0) {
+                                //     x = r;
+                                //     vx = -vx;
+                                // }
+
+                                // if (x > gwidth) {
+                                //     x = gwidth - r;
+                                //     vx = -vx;
+                                // }
+
+                                // if (y < 0) {
+                                //     y = r;
+                                //     vy = -vy;
+                                // }
+
+                                // if (y > gheight) {
+                                //     y = gheight - r;
+                                //     vy = -vy;
+                                // }
 
                                 if (x < 0) {
-                                    x = r;
-                                    vx = -vx;
+                                    x = gwidth;
                                 }
 
                                 if (x > gwidth) {
-                                    x = gwidth - r;
-                                    vx = -vx;
+                                    x = 0;
                                 }
 
                                 if (y < 0) {
-                                    y = r;
-                                    vy = -vy;
+                                    y = gheight;
                                 }
 
                                 if (y > gheight) {
-                                    y = gheight - r;
-                                    vy = -vy;
+                                    y = 0;
                                 }
 
-                                points.forEach(function (other, other_index) {
-                                    if (index !== other_index) {
-                                        let ox = other[0];
-                                        let oy = other[1];
-                                        let or = other[2];
-                                        let ovx = other[3];
-                                        let ovy = other[4];
+                                // points.forEach(function (other, other_index) {
+                                //     if (index !== other_index && other_index !== 1) {
+                                //         let ox = other[0];
+                                //         let oy = other[1];
+                                //         let or = other[2];
+                                //         let ovx = other[3];
+                                //         let ovy = other[4];
 
-                                        let d = distance(x, y, ox, oy);
+                                //         let d = distance(x, y, ox, oy);
 
-                                        if (d < r + or) {
-                                            vx = -vx;
-                                            vy = -vy;
-                                        }
-                                    }
-                                });
+                                //         if ((d / 2) < r + or) {
+                                //             vx = -vx * (r / or);
+                                //             vy = -vy * (r / or);
+
+                                //             ovx = -ovx * (or / r);
+                                //             ovy = -ovy * (or / r);
+                                //         }
+                                //     }
+                                // });
 
                                 // if (vx > 100) {
                                 //     vx = 100;
@@ -224,8 +242,21 @@ Rectangle {
                                 //     vy = -100;
                                 // }
 
+                                vx *= 0.99 * t;
+                                vy *= 0.99 * t;
+
                                 x += vx * 0.01;
                                 y += vy * 0.01;
+
+                                // console.log("point", point);
+
+                                // nan check
+                                if (isNaN(x) || isNaN(y) || isNaN(vx) || isNaN(vy)) {
+                                    x = 0;
+                                    y = 0;
+                                    vx = 0;
+                                    vy = 0;
+                                }
 
                                 point[0] = x;
                                 point[1] = y;
@@ -233,7 +264,6 @@ Rectangle {
                                 point[3] = vx;
                                 point[4] = vy;
                             });
-
                             pointA_x = points[0][0];
                             pointA_y = points[0][1];
                             pointB_x = points[1][0];

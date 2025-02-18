@@ -7,12 +7,14 @@ layout(location = 0) out vec4 fragColor;
 layout(binding = 1) uniform sampler2D source;
 
 layout(std140, binding = 0) uniform buf {
+    mat4 qt_Matrix;
     float qt_Opacity;
 
     uniform int gheight;
     uniform int gwidth;
 
     uniform float treshold;
+    uniform float strength;
 
     uniform float pointA_x;
     uniform float pointA_y;
@@ -26,16 +28,55 @@ layout(std140, binding = 0) uniform buf {
     uniform float radiusC;
 } ubuf;
 
+float wrappedDistance(float x1, float y1, float x2, float y2, float width, float height) {
+    float dx = abs(x1 - x2);
+    float dy = abs(y1 - y2);
+    if(dx > width / 2) {
+        dx = width - dx;
+    }
+    if(dy > height / 2) {
+        dy = height - dy;
+    }
+    return sqrt(dx * dx + dy * dy);
+}
+
+float squareDistance(float x1, float y1, float x2, float y2) {
+    float dx = x1 - x2;
+    float dy = y1 - y2;
+    return dx * dx + dy * dy;
+}
+
 void main() {
     float x = qt_TexCoord0.x * ubuf.gwidth;
     float y = qt_TexCoord0.y * ubuf.gheight;
 
     float influenceBg = 0.0;
-    float influenceFg = 0.0;
 
-    float A = (x - ubuf.pointA_x) * (x - ubuf.pointA_x) + (y - ubuf.pointA_y) * (y - ubuf.pointA_y);
-    float B = (x - ubuf.pointB_x) * (x - ubuf.pointB_x) + (y - ubuf.pointB_y) * (y - ubuf.pointB_y);
-    float C = (x - ubuf.pointC_x) * (x - ubuf.pointC_x) + (y - ubuf.pointC_y) * (y - ubuf.pointC_y);
+    // influence wraps around edges
+
+    float A = squareDistance(x, y, ubuf.pointA_x, ubuf.pointA_y);
+    float B = squareDistance(x, y, ubuf.pointB_x, ubuf.pointB_y);
+    float C = squareDistance(x, y, ubuf.pointC_x, ubuf.pointC_y);
+
+    A *= squareDistance(x, y, ubuf.pointA_x + ubuf.gwidth, ubuf.pointA_y);
+    B *= squareDistance(x, y, ubuf.pointB_x + ubuf.gwidth, ubuf.pointB_y);
+    C *= squareDistance(x, y, ubuf.pointC_x + ubuf.gwidth, ubuf.pointC_y);
+
+    A *= squareDistance(x, y, ubuf.pointA_x - ubuf.gwidth, ubuf.pointA_y);
+    B *= squareDistance(x, y, ubuf.pointB_x - ubuf.gwidth, ubuf.pointB_y);
+    C *= squareDistance(x, y, ubuf.pointC_x - ubuf.gwidth, ubuf.pointC_y);
+
+    // A *= squareDistance(x, y, ubuf.pointA_x, ubuf.pointA_y + ubuf.gheight);
+    // B *= squareDistance(x, y, ubuf.pointB_x, ubuf.pointB_y + ubuf.gheight);
+    // C *= squareDistance(x, y, ubuf.pointC_x, ubuf.pointC_y + ubuf.gheight);
+
+    // A *= squareDistance(x, y, ubuf.pointA_x, ubuf.pointA_y - ubuf.gheight);
+    // B *= squareDistance(x, y, ubuf.pointB_x, ubuf.pointB_y - ubuf.gheight);
+    // C *= squareDistance(x, y, ubuf.pointC_x, ubuf.pointC_y - ubuf.gheight);
+
+    // float influenceA = ubuf.radiusA * ubuf.radiusA / A;
+    // float influenceB = ubuf.radiusB * ubuf.radiusB / B;
+    // float influenceC = ubuf.radiusC * ubuf.radiusC / C;
 
     float influenceA = ubuf.radiusA * ubuf.radiusA / A;
     float influenceB = ubuf.radiusB * ubuf.radiusB / B;
@@ -44,21 +85,30 @@ void main() {
     vec4 colorA = vec4(0.95, 0.59, 1.0, 1.0);
     vec4 colorB = vec4(0.95, 0.42, 1.0, 1.0);
     vec4 colorC = vec4(1.0, 0.58, 0.78, 1.0);
-    vec4 colorD = vec4(1.0, 0.47, 0.47, 1.0);
-    vec4 colorE = vec4(0.49, 0.42, 1.0, 1.0);
-    vec4 colorF = vec4(1.0, 0.94, 0.46, 1.0);
 
     influenceBg = influenceA + influenceB + influenceC;
 
     fragColor = texture(source, qt_TexCoord0) * ubuf.qt_Opacity;
 
     if(influenceA > ubuf.treshold) {
-        fragColor = mix(fragColor, colorA, influenceA * (ubuf.radiusA / 2) / influenceBg) * ubuf.qt_Opacity;
+        fragColor = mix(fragColor, colorA, influenceA * (ubuf.radiusA / ubuf.strength) / influenceBg) * ubuf.qt_Opacity;
     }
     if(influenceB > ubuf.treshold) {
-        fragColor = mix(fragColor, colorB, influenceB * (ubuf.radiusB / 2) / influenceBg) * ubuf.qt_Opacity;
+        fragColor = mix(fragColor, colorB, influenceB * (ubuf.radiusB / ubuf.strength) / influenceBg) * ubuf.qt_Opacity;
     }
     if(influenceC > ubuf.treshold) {
-        fragColor = mix(fragColor, colorC, influenceC * (ubuf.radiusC / 2) / influenceBg) * ubuf.qt_Opacity;
+        fragColor = mix(fragColor, colorC, influenceC * (ubuf.radiusC / ubuf.strength) / influenceBg) * ubuf.qt_Opacity;
     }
+
+    // if(distance(vec2(x, y), vec2(ubuf.pointA_x, ubuf.pointA_y)) < 3) {
+    //     fragColor = vec4(1, 0, 0, 1) * ubuf.qt_Opacity;
+    // }
+
+    // if(distance(vec2(x, y), vec2(ubuf.pointB_x, ubuf.pointB_y)) < 3) {
+    //     fragColor = vec4(0, 1, 0, 1) * ubuf.qt_Opacity;
+    // }
+
+    // if(distance(vec2(x, y), vec2(ubuf.pointC_x, ubuf.pointC_y)) < 3) {
+    //     fragColor = vec4(0, 0, 1, 1) * ubuf.qt_Opacity;
+    // }
 }

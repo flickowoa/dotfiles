@@ -20,7 +20,7 @@ Rectangle {
         Repeater {
             model: 10
             delegate: Pill {
-                color: "blue"
+                color: "black"
 
                 width: Config.pillWidth * 0.7
                 height: Config.pillHeight
