@@ -22,6 +22,9 @@ Rectangle {
             delegate: Pill {
                 color: "black"
 
+                cava_index: index
+                randomIndex: false
+
                 width: Config.pillWidth * 0.7
                 height: Config.pillHeight
 

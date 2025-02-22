@@ -6,13 +6,11 @@ import Quickshell.Hyprland
 import QtQuick.Controls
 import QtQuick.Layouts
 
-
 PanelWindow {
-	id: background
-    
-	exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.layer: WlrLayer.Background
+    id: background
 
+    exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.layer: WlrLayer.Background
     color: "white"
 
     anchors {
@@ -24,9 +22,8 @@ PanelWindow {
 
     Image {
         id: bg
-        source: "root:../wallpapers/cloud.png"
+        source: "root:../wallpapers/rocket.jpg"
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
     }
-
 }

@@ -101,14 +101,14 @@ void main() {
     }
 
     // if(distance(vec2(x, y), vec2(ubuf.pointA_x, ubuf.pointA_y)) < 3) {
-    //     fragColor = vec4(1, 0, 0, 1) * ubuf.qt_Opacity;
+    //     fragColor = vec4(0.0, 0.0, 0.0, 1.0) * ubuf.qt_Opacity;
     // }
 
     // if(distance(vec2(x, y), vec2(ubuf.pointB_x, ubuf.pointB_y)) < 3) {
-    //     fragColor = vec4(0, 1, 0, 1) * ubuf.qt_Opacity;
+    //     fragColor = vec4(0.0, 0.0, 0.0, 1.0) * ubuf.qt_Opacity;
     // }
 
     // if(distance(vec2(x, y), vec2(ubuf.pointC_x, ubuf.pointC_y)) < 3) {
-    //     fragColor = vec4(0, 0, 1, 1) * ubuf.qt_Opacity;
+    //     fragColor = vec4(0.0, 0.0, 0.0, 1.0) * ubuf.qt_Opacity;
     // }
 }

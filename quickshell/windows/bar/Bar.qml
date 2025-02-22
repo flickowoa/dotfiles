@@ -14,7 +14,7 @@ import "root:"
 PanelWindow {
     id: topbar
 
-    WlrLayershell.layer: WlrLayer.Top
+    WlrLayershell.layer: WlrLayer.Bottom
 
     color: "transparent"
 

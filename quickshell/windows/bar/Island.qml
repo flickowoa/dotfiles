@@ -10,7 +10,7 @@ import "root:"
 Rectangle {
     id: island
 
-    property int pillWidth: Config.pillWidth * 6
+    property int pillWidth: Config.pillWidth * 8
     property int pillHeight: Config.pillHeight
 
     height: pillHeight
@@ -19,7 +19,7 @@ Rectangle {
     color: "transparent"
 
     Component.onCompleted: {
-        console.log("mpris", Mpris.players[0]);
+        console.log("Mpris.players", Mpris.players.values[0]);
     }
 
     GaussianBlur {
@@ -40,7 +40,7 @@ Rectangle {
         width: pillWidth
         source: cava
         brightness: -0.5
-        contrast: 1
+        contrast: 0
     }
 
     ShaderEffectSource {
@@ -88,21 +88,21 @@ Rectangle {
             Pill {
                 id: content
                 // visible: false
-                color: "black"
+                color: "white"
 
                 // radius: 0
 
                 y: 0
-                width: pillWidth
+                width: pillWidth + 10
                 height: pillHeight
 
                 anchors {
                     horizontalCenter: parent.horizontalCenter
+                    verticalCenter: parent.verticalCenter
                 }
 
                 layer.enabled: true
                 layer.effect: ShaderEffect {
-                    property real t: 0
                     property int gheight: parent.height
                     property int gwidth: parent.width
 
@@ -111,9 +111,9 @@ Rectangle {
 
                     property real pointA_x: 0
                     property real pointA_y: gheight / 2
-                    property real pointB_x: gwidth / 2
+                    property real pointB_x: 0
                     property real pointB_y: gheight / 2
-                    property real pointC_x: gwidth
+                    property real pointC_x: 0
                     property real pointC_y: gheight / 2
 
                     property real pointA_vx: 0
@@ -129,6 +129,8 @@ Rectangle {
                     property real radiusB: 2
                     property real radiusC: 2
 
+                    property real minDistance: gwidth / 10
+
                     fragmentShader: "root:shaders/pill.frag.qsb"
 
                     function distance(x1, y1, x2, y2) {
@@ -140,13 +142,11 @@ Rectangle {
                         function onValuesChanged() {
                             let points = [[pointA_x, pointA_y, radiusA, pointA_vx, pointA_vy], [pointB_x, pointB_y, radiusB, pointB_vx, pointB_vy], [pointC_x, pointC_y, radiusC, pointC_vx, pointC_vy]];
 
-                            let avg_t = Cava.values.reduce((a, b) => a + b, 0) / Cava.values.length;
-
-                            strength = 5 - 3 * avg_t;
-                            blur.radius = 50 * avg_t;
-                            blur.samples = 16 + 16 * (1 - avg_t);
-                            bright.brightness = -0.5 + 1 * avg_t;
-                            bright.contrast = 0.5 + 0.5 * avg_t;
+                            strength = 5 - 3 * Cava.avg_t;
+                            blur.radius = 50 * Cava.avg_t;
+                            blur.samples = 16 + 16 * (1 - Cava.avg_t);
+                            bright.brightness = -0.5 + 1 * Cava.avg_t;
+                            bright.contrast = 0.5 + 0.5 * Cava.avg_t;
 
                             points.forEach(function (point, index) {
                                 let x = point[0];
@@ -160,12 +160,18 @@ Rectangle {
                                 let dcx = cx - x;
                                 let dcy = cy - y;
 
-                                let t = Cava.values[index];
+                                // split Cava.values into 3 by avging them
+                                // let avg_t = Cava.avg_t;
+
+                                let slice = Cava.values.slice(Cava.barCount / 3 * index, Cava.barCount / 3 * (index + 1));
+
+                                // console.log(`slice ${index}`, slice);
+                                let t = slice.reduce((a, b) => a + b, 0) / slice.length;
 
                                 // vx += -25 * avg_t;
 
-                                vx += (gwidth / 2) * (Math.random() - 0.5);
-                                vy += (gheight / 2) * (Math.random() - 0.5);
+                                vx += (gwidth) * (Math.random() - 0.5);
+                                vy += (gheight) * (Math.random() - 0.5);
 
                                 // vx += dcx * 0.01;
                                 // vy += dcy * 0.01;
@@ -206,25 +212,25 @@ Rectangle {
                                     y = 0;
                                 }
 
-                                // points.forEach(function (other, other_index) {
-                                //     if (index !== other_index && other_index !== 1) {
-                                //         let ox = other[0];
-                                //         let oy = other[1];
-                                //         let or = other[2];
-                                //         let ovx = other[3];
-                                //         let ovy = other[4];
+                                points.forEach(function (other, other_index) {
+                                    if (index !== other_index && other_index !== 1) {
+                                        let ox = other[0];
+                                        let oy = other[1];
+                                        let or = other[2];
+                                        let ovx = other[3];
+                                        let ovy = other[4];
 
-                                //         let d = distance(x, y, ox, oy);
+                                        let d = distance(x, y, ox, oy);
 
-                                //         if ((d / 2) < r + or) {
-                                //             vx = -vx * (r / or);
-                                //             vy = -vy * (r / or);
+                                        let dxox = x - ox;
+                                        let dyoy = y - oy;
 
-                                //             ovx = -ovx * (or / r);
-                                //             ovy = -ovy * (or / r);
-                                //         }
-                                //     }
-                                // });
+                                        if (d < minDistance) {
+                                            vx += dxox * 0.1;
+                                            vy += dyoy * 0.1;
+                                        }
+                                    }
+                                });
 
                                 // if (vx > 100) {
                                 //     vx = 100;
@@ -252,6 +258,7 @@ Rectangle {
 
                                 // nan check
                                 if (isNaN(x) || isNaN(y) || isNaN(vx) || isNaN(vy)) {
+                                    console.log("nan detected");
                                     x = 0;
                                     y = 0;
                                     vx = 0;
@@ -260,7 +267,7 @@ Rectangle {
 
                                 point[0] = x;
                                 point[1] = y;
-                                point[2] = 10 * Cava.values[index];
+                                point[2] = 12 * t;
                                 point[3] = vx;
                                 point[4] = vy;
                             });
@@ -289,7 +296,7 @@ Rectangle {
     }
     Text {
         id: songname
-        text: "t"
+        text: Mpris.players.values[0].trackTitle
         font.pixelSize: 20
         anchors.centerIn: parent
     }
