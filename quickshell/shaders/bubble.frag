@@ -32,6 +32,7 @@ layout(std140, binding = 0) uniform buf {
     uniform vec4 colorC;
 
     uniform float invert;
+    uniform int heightOverflow;
 } ubuf;
 
 float squareDistance(float x1, float y1, float x2, float y2) {

@@ -138,7 +138,7 @@ Rectangle {
                 property int gheight: parent.height
                 property int gwidth: parent.width
 
-                property int heightOverflow: 0
+                property int heightOverflow: 80
                 property int widthOverflow: 0
 
                 property real treshold: 0
@@ -197,7 +197,7 @@ Rectangle {
 
                 property real minDistance: gwidth / 10
 
-                property real invert: -0.5
+                property real invert: -1
 
                 fragmentShader: "root:shaders/bubble.frag.qsb"
 
@@ -210,7 +210,7 @@ Rectangle {
                     function onValuesChanged() {
                         let points = [[pointA_x, pointA_y, radiusA, pointA_vx, pointA_vy, angleA], [pointB_x, pointB_y, radiusB, pointB_vx, pointB_vy, angleB], [pointC_x, pointC_y, radiusC, pointC_vx, pointC_vy, angleC]];
 
-                        strength = 1;
+                        strength = 0.1;
                         // blur.radius = 50 * Cava.avg_t;
                         // blur.samples = 16 + 16 * (1 - Cava.avg_t);
                         // bright.brightness = 0 + 1 * Cava.avg_t;
@@ -243,7 +243,7 @@ Rectangle {
                             // angle
                             // console.log("angle", angle);
                             // vx += Math.cos(angle) * gwidth / 2 * t;
-                            vy = -30;
+                            vy = -30 + 10 * Math.random();
                             // vy += Math.sin(angle) * gheight / 2 * t;
                             // console.log("vx", vx);
 
@@ -325,7 +325,7 @@ Rectangle {
 
                             point[0] = x;
                             point[1] = y;
-                            point[2] = 2 + 12 * t;
+                            point[2] = 30;
                             point[3] = vx;
                             point[4] = vy;
                             point[5] = angle;
