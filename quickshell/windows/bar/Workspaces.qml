@@ -92,7 +92,7 @@ Rectangle {
 
         Behavior on x {
             NumberAnimation {
-                duration: 300
+                duration: 400
                 easing.type: Easing.OutExpo
             }
         }
@@ -210,7 +210,7 @@ Rectangle {
                     function onValuesChanged() {
                         let points = [[pointA_x, pointA_y, radiusA, pointA_vx, pointA_vy, angleA], [pointB_x, pointB_y, radiusB, pointB_vx, pointB_vy, angleB], [pointC_x, pointC_y, radiusC, pointC_vx, pointC_vy, angleC]];
 
-                        strength = 0.1;
+                        strength = 0.3;
                         // blur.radius = 50 * Cava.avg_t;
                         // blur.samples = 16 + 16 * (1 - Cava.avg_t);
                         // bright.brightness = 0 + 1 * Cava.avg_t;
@@ -325,7 +325,7 @@ Rectangle {
 
                             point[0] = x;
                             point[1] = y;
-                            point[2] = 30;
+                            point[2] = 50;
                             point[3] = vx;
                             point[4] = vy;
                             point[5] = angle;
