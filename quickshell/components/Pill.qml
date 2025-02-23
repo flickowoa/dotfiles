@@ -5,7 +5,7 @@ import "root:"
 
 Rectangle {
     id: pill
-    color: Colors.primary
+    color: Config.darkMode ? Colors.background : Colors.primary
     width: childrenRect.width ? childrenRect.width + Config.pillHPadding : Config.pillWidth
     height: Config.pillHeight
 
@@ -36,6 +36,7 @@ Rectangle {
 
     RectangularGlow {
         id: glow
+        visible: Config.musicMode
 
         // Behavior on glowRadius {
         //     NumberAnimation {

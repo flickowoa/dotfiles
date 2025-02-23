@@ -63,6 +63,8 @@ PanelWindow {
             Layout.fillWidth: true
             Layout.horizontalStretchFactor: 1
 
+            // width: center.childrenRect.width
+
             Island {}
         }
 

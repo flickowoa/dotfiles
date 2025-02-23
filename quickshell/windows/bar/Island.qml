@@ -10,11 +10,29 @@ import "root:"
 Rectangle {
     id: island
 
-    property int pillWidth: Config.pillWidth * 8
+    anchors.centerIn: parent
+
+    property int pillWidth: songname.width + 200
     property int pillHeight: Config.pillHeight
+
+    property real xshift: 0
+
+    Behavior on xshift {
+        NumberAnimation {
+            duration: 1000
+            easing.type: Easing.OutExpo
+        }
+    }
 
     height: pillHeight
     width: pillWidth + 20
+
+    Behavior on pillWidth {
+        NumberAnimation {
+            duration: 300
+            easing.type: Easing.InOutQuad
+        }
+    }
 
     color: "transparent"
 
@@ -22,15 +40,40 @@ Rectangle {
         console.log("Mpris.players", Mpris.players.values[0]);
     }
 
+    RectangularGlow {
+        id: shadow
+        anchors.centerIn: parent
+        height: pillHeight
+        width: pillWidth
+        color: Colors.primary
+
+        cornerRadius: content.radius
+    }
+
     GaussianBlur {
         id: blur
         source: bright
         radius: 30
         samples: 16
+        visible: false
         anchors.centerIn: parent
         height: pillHeight
         width: pillWidth
         transparentBorder: true
+
+        Behavior on radius {
+            NumberAnimation {
+                duration: Config.slowPill ? 5000 : 0
+                easing.type: Easing.InOutQuad
+            }
+        }
+
+        Behavior on samples {
+            NumberAnimation {
+                duration: Config.slowPill ? 5000 : 0
+                easing.type: Easing.InOutQuad
+            }
+        }
     }
 
     BrightnessContrast {
@@ -41,6 +84,20 @@ Rectangle {
         source: cava
         brightness: -0.5
         contrast: 0
+
+        Behavior on brightness {
+            NumberAnimation {
+                duration: Config.slowPill ? 5000 : 0
+                easing.type: Easing.OutExpo
+            }
+        }
+
+        Behavior on contrast {
+            NumberAnimation {
+                duration: Config.slowPill ? 5000 : 0
+                easing.type: Easing.OutExpo
+            }
+        }
     }
 
     ShaderEffectSource {
@@ -48,13 +105,13 @@ Rectangle {
         visible: false
         height: pillHeight
         width: pillWidth
-        mipmap: true
+        mipmap: false
         anchors {
             horizontalCenter: parent.horizontalCenter
         }
         sourceItem: contentwrap
         // live: true
-        wrapMode: ShaderEffectSource.ClampToEdge
+        // wrapMode: ShaderEffectSource.ClampToEdge
         // hideSource: true
     }
 
@@ -88,7 +145,8 @@ Rectangle {
             Pill {
                 id: content
                 // visible: false
-                color: "white"
+
+                color: Colors.background
 
                 // radius: 0
 
@@ -106,14 +164,17 @@ Rectangle {
                     property int gheight: parent.height
                     property int gwidth: parent.width
 
+                    property int heightOverflow: 50
+                    property int widthOverflow: 0
+
                     property real treshold: 0
                     property real strength: 5
 
-                    property real pointA_x: 0
+                    property real pointA_x: 10
                     property real pointA_y: gheight / 2
-                    property real pointB_x: 0
+                    property real pointB_x: gwidth / 2
                     property real pointB_y: gheight / 2
-                    property real pointC_x: 0
+                    property real pointC_x: gwidth - 10
                     property real pointC_y: gheight / 2
 
                     property real pointA_vx: 0
@@ -129,7 +190,40 @@ Rectangle {
                     property real radiusB: 2
                     property real radiusC: 2
 
+                    property real angleA: 0
+                    property real angleB: 0
+                    property real angleC: 0
+
+                    Behavior on radiusA {
+                        NumberAnimation {
+                            duration: Config.slowPill ? 5000 : 0
+                            easing.type: Easing.OutExpo
+                        }
+                    }
+
+                    Behavior on radiusB {
+                        NumberAnimation {
+                            duration: Config.slowPill ? 5000 : 0
+                            easing.type: Easing.OutExpo
+                        }
+                    }
+
+                    Behavior on radiusC {
+                        NumberAnimation {
+                            duration: Config.slowPill ? 5000 : 0
+                            easing.type: Easing.OutExpo
+                        }
+                    }
+
+                    property color colorA: Cava.colors[0]
+                    property color colorB: Cava.colors[1]
+                    property color colorC: Cava.colors[2]
+
                     property real minDistance: gwidth / 10
+
+                    property real gxshift: xshift
+
+                    property real invert: Config.darkMode ? 1 : 0.5
 
                     fragmentShader: "root:shaders/pill.frag.qsb"
 
@@ -138,15 +232,33 @@ Rectangle {
                     }
 
                     Connections {
+                        target: Mpris.players.values[0]
+
+                        function onTrackTitleChanged() {
+                            xshift = 10000;
+                            xshiftReset.running = true;
+                        }
+                    }
+
+                    Timer {
+                        id: xshiftReset
+                        interval: 250
+                        running: false
+                        onTriggered: {
+                            xshift = 0;
+                        }
+                    }
+
+                    Connections {
                         target: Cava
                         function onValuesChanged() {
-                            let points = [[pointA_x, pointA_y, radiusA, pointA_vx, pointA_vy], [pointB_x, pointB_y, radiusB, pointB_vx, pointB_vy], [pointC_x, pointC_y, radiusC, pointC_vx, pointC_vy]];
+                            let points = [[pointA_x, pointA_y, radiusA, pointA_vx, pointA_vy, angleA], [pointB_x, pointB_y, radiusB, pointB_vx, pointB_vy, angleB], [pointC_x, pointC_y, radiusC, pointC_vx, pointC_vy, angleC]];
 
-                            strength = 5 - 3 * Cava.avg_t;
+                            strength = (Config.darkMode ? 5 : 3) - 3 * Cava.avg_t;
                             blur.radius = 50 * Cava.avg_t;
                             blur.samples = 16 + 16 * (1 - Cava.avg_t);
-                            bright.brightness = -0.5 + 1 * Cava.avg_t;
-                            bright.contrast = 0.5 + 0.5 * Cava.avg_t;
+                            bright.brightness = 0 + 1 * Cava.avg_t;
+                            // bright.contrast = 0.5 + 0.5 * Cava.avg_t;
 
                             points.forEach(function (point, index) {
                                 let x = point[0];
@@ -154,12 +266,13 @@ Rectangle {
                                 let r = point[2];
                                 let vx = point[3];
                                 let vy = point[4];
+                                let angle = point[5];
+
                                 let cx = gwidth / 2;
                                 let cy = gheight / 2;
 
                                 let dcx = cx - x;
                                 let dcy = cy - y;
-
                                 // split Cava.values into 3 by avging them
                                 // let avg_t = Cava.avg_t;
 
@@ -169,9 +282,13 @@ Rectangle {
                                 let t = slice.reduce((a, b) => a + b, 0) / slice.length;
 
                                 // vx += -25 * avg_t;
-
-                                vx += (gwidth) * (Math.random() - 0.5);
-                                vy += (gheight) * (Math.random() - 0.5);
+                                angle += 0.1 * t;
+                                angle = angle % (2 * Math.PI);
+                                // angle
+                                // console.log("angle", angle);
+                                vx += Math.cos(angle) * gwidth / 2 * t;
+                                vy += Math.sin(angle) * gheight / 2 * t;
+                                // console.log("vx", vx);
 
                                 // vx += dcx * 0.01;
                                 // vy += dcy * 0.01;
@@ -196,19 +313,19 @@ Rectangle {
                                 //     vy = -vy;
                                 // }
 
-                                if (x < 0) {
+                                if (x < -widthOverflow) {
                                     x = gwidth;
                                 }
 
-                                if (x > gwidth) {
+                                if (x > gwidth + widthOverflow) {
                                     x = 0;
                                 }
 
-                                if (y < 0) {
+                                if (y < -heightOverflow) {
                                     y = gheight;
                                 }
 
-                                if (y > gheight) {
+                                if (y > gheight + heightOverflow) {
                                     y = 0;
                                 }
 
@@ -226,8 +343,8 @@ Rectangle {
                                         let dyoy = y - oy;
 
                                         if (d < minDistance) {
-                                            vx += dxox * 0.1;
-                                            vy += dyoy * 0.1;
+                                            vx += dxox * 0.5;
+                                            vy += dyoy * 0.5;
                                         }
                                     }
                                 });
@@ -250,6 +367,9 @@ Rectangle {
 
                                 vx *= 0.99 * t;
                                 vy *= 0.99 * t;
+                                if (xshift)
+                                    vx = 0;
+                                vx -= xshift;
 
                                 x += vx * 0.01;
                                 y += vy * 0.01;
@@ -270,7 +390,9 @@ Rectangle {
                                 point[2] = 12 * t;
                                 point[3] = vx;
                                 point[4] = vy;
+                                point[5] = angle;
                             });
+
                             pointA_x = points[0][0];
                             pointA_y = points[0][1];
                             pointB_x = points[1][0];
@@ -288,6 +410,10 @@ Rectangle {
                             pointB_vy = points[1][4];
                             pointC_vx = points[2][3];
                             pointC_vy = points[2][4];
+
+                            angleA = points[0][5];
+                            angleB = points[1][5];
+                            angleC = points[2][5];
                         }
                     }
                 }
@@ -296,8 +422,21 @@ Rectangle {
     }
     Text {
         id: songname
+        // visible: false
         text: Mpris.players.values[0].trackTitle
+        color: Config.darkMode ? Cava.avg_t > 0 ? Colors.background : Colors.on_background : Cava.avg_t > 0 ? Colors.primary : Colors.on_background
+        x: xshift
+        font.weight: 700
         font.pixelSize: 20
         anchors.centerIn: parent
     }
+
+    // DropShadow {
+    //     anchors.fill: songname
+    //     source: songname
+    //     radius: 20
+    //     samples: 20
+    //     color: Cava.background
+    //     visible: true
+    // }
 }

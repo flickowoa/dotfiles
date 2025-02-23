@@ -26,19 +26,13 @@ layout(std140, binding = 0) uniform buf {
     uniform float radiusA;
     uniform float radiusB;
     uniform float radiusC;
-} ubuf;
 
-float wrappedDistance(float x1, float y1, float x2, float y2, float width, float height) {
-    float dx = abs(x1 - x2);
-    float dy = abs(y1 - y2);
-    if(dx > width / 2) {
-        dx = width - dx;
-    }
-    if(dy > height / 2) {
-        dy = height - dy;
-    }
-    return sqrt(dx * dx + dy * dy);
-}
+    uniform vec4 colorA;
+    uniform vec4 colorB;
+    uniform vec4 colorC;
+
+    uniform float invert;
+} ubuf;
 
 float squareDistance(float x1, float y1, float x2, float y2) {
     float dx = x1 - x2;
@@ -82,22 +76,30 @@ void main() {
     float influenceB = ubuf.radiusB * ubuf.radiusB / B;
     float influenceC = ubuf.radiusC * ubuf.radiusC / C;
 
-    vec4 colorA = vec4(0.95, 0.59, 1.0, 1.0);
-    vec4 colorB = vec4(0.95, 0.42, 1.0, 1.0);
-    vec4 colorC = vec4(1.0, 0.58, 0.78, 1.0);
+    // vec4 colorA = vec4(0.95, 0.59, 1.0, 1.0);
+    // vec4 colorB = vec4(0.95, 0.42, 1.0, 1.0);
+    // vec4 colorC = vec4(1.0, 0.58, 0.78, 1.0);
 
     influenceBg = influenceA + influenceB + influenceC;
 
     fragColor = texture(source, qt_TexCoord0) * ubuf.qt_Opacity;
 
+    float ratioA = influenceA * (ubuf.radiusA / ubuf.strength) / influenceBg;
+    float ratioB = influenceB * (ubuf.radiusB / ubuf.strength) / influenceBg;
+    float ratioC = influenceC * (ubuf.radiusC / ubuf.strength) / influenceBg;
+
+    ratioA = pow(ratioA, ubuf.invert);
+    ratioB = pow(ratioB, ubuf.invert);
+    ratioC = pow(ratioC, ubuf.invert);
+
     if(influenceA > ubuf.treshold) {
-        fragColor = mix(fragColor, colorA, influenceA * (ubuf.radiusA / ubuf.strength) / influenceBg) * ubuf.qt_Opacity;
+        fragColor = mix(fragColor, ubuf.colorA, ratioA) * ubuf.qt_Opacity;
     }
     if(influenceB > ubuf.treshold) {
-        fragColor = mix(fragColor, colorB, influenceB * (ubuf.radiusB / ubuf.strength) / influenceBg) * ubuf.qt_Opacity;
+        fragColor = mix(fragColor, ubuf.colorB, ratioB) * ubuf.qt_Opacity;
     }
     if(influenceC > ubuf.treshold) {
-        fragColor = mix(fragColor, colorC, influenceC * (ubuf.radiusC / ubuf.strength) / influenceBg) * ubuf.qt_Opacity;
+        fragColor = mix(fragColor, ubuf.colorC, ratioC) * ubuf.qt_Opacity;
     }
 
     // if(distance(vec2(x, y), vec2(ubuf.pointA_x, ubuf.pointA_y)) < 3) {
