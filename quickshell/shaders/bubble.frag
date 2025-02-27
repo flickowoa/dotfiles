@@ -13,153 +13,82 @@ layout(std140, binding = 0) uniform buf {
     uniform int gheight;
     uniform int gwidth;
 
-    uniform float treshold;
-    uniform float strength;
-
-    uniform float pointA_x;
-    uniform float pointA_y;
-    uniform float pointB_x;
-    uniform float pointB_y;
-    uniform float pointC_x;
-    uniform float pointC_y;
-
-    uniform float radiusA;
-    uniform float radiusB;
-    uniform float radiusC;
-
+    uniform float xshift;
+    uniform float t;
     uniform vec4 colorA;
     uniform vec4 colorB;
     uniform vec4 colorC;
 
-    uniform float invert;
-    uniform int heightOverflow;
+    uniform float strength;
+    uniform float cava;
+    // uniform float seed;
 } ubuf;
 
-float squareDistance(float x1, float y1, float x2, float y2) {
-    float dx = x1 - x2;
-    float dy = y1 - y2;
-    return dx * dx + dy * dy;
+float random(float seed, float t) {
+    return fract(sin(dot(vec2(seed, t), vec2(12.9898, 78.233))) * 43758.5453);
 }
 
 void main() {
     float x = qt_TexCoord0.x * ubuf.gwidth;
     float y = qt_TexCoord0.y * ubuf.gheight;
+    float t = ubuf.t;
 
-    float influenceBg = 0.0;
+    float gwidth = float(ubuf.gwidth);
+    float gheight = float(ubuf.gheight);
 
-    // influence wraps around edges
-
-    float A = squareDistance(x, y, ubuf.pointA_x, ubuf.pointA_y);
-    float B = squareDistance(x, y, ubuf.pointB_x, ubuf.pointB_y);
-    float C = squareDistance(x, y, ubuf.pointC_x, ubuf.pointC_y);
-
-    // wrap around
-
-    float wrappedTopA = squareDistance(x, y, ubuf.pointA_x, ubuf.pointA_y + ubuf.gheight);
-    float wrappedTopB = squareDistance(x, y, ubuf.pointB_x, ubuf.pointB_y + ubuf.gheight);
-    float wrappedTopC = squareDistance(x, y, ubuf.pointC_x, ubuf.pointC_y + ubuf.gheight);
-
-    float wrappedBottomA = squareDistance(x, y, ubuf.pointA_x, ubuf.pointA_y - ubuf.gheight);
-    float wrappedBottomB = squareDistance(x, y, ubuf.pointB_x, ubuf.pointB_y - ubuf.gheight);
-    float wrappedBottomC = squareDistance(x, y, ubuf.pointC_x, ubuf.pointC_y - ubuf.gheight);
-
-    // A *= squareDistance(x, y, ubuf.pointA_x + ubuf.gwidth, ubuf.pointA_y);
-    // B *= squareDistance(x, y, ubuf.pointB_x + ubuf.gwidth, ubuf.pointB_y);
-    // C *= squareDistance(x, y, ubuf.pointC_x + ubuf.gwidth, ubuf.pointC_y);
-
-    // A *= squareDistance(x, y, ubuf.pointA_x - ubuf.gwidth, ubuf.pointA_y);
-    // B *= squareDistance(x, y, ubuf.pointB_x - ubuf.gwidth, ubuf.pointB_y);
-    // C *= squareDistance(x, y, ubuf.pointC_x - ubuf.gwidth, ubuf.pointC_y);
-
-    // A *= squareDistance(x, y, ubuf.pointA_x, ubuf.pointA_y + ubuf.gheight);
-    // B *= squareDistance(x, y, ubuf.pointB_x, ubuf.pointB_y + ubuf.gheight);
-    // C *= squareDistance(x, y, ubuf.pointC_x, ubuf.pointC_y + ubuf.gheight);
-
-    // A *= squareDistance(x, y, ubuf.pointA_x, ubuf.pointA_y - ubuf.gheight);
-    // B *= squareDistance(x, y, ubuf.pointB_x, ubuf.pointB_y - ubuf.gheight);
-    // C *= squareDistance(x, y, ubuf.pointC_x, ubuf.pointC_y - ubuf.gheight);
-
-    // float influenceA = ubuf.radiusA * ubuf.radiusA / A;
-    // float influenceB = ubuf.radiusB * ubuf.radiusB / B;
-    // float influenceC = ubuf.radiusC * ubuf.radiusC / C;
-
-    float influenceA = ubuf.radiusA * ubuf.radiusA / A;
-    float influenceB = ubuf.radiusB * ubuf.radiusB / B;
-    float influenceC = ubuf.radiusC * ubuf.radiusC / C;
-
-    float influenceTopA = ubuf.radiusA * ubuf.radiusA / wrappedTopA;
-    float influenceTopB = ubuf.radiusB * ubuf.radiusB / wrappedTopB;
-    float influenceTopC = ubuf.radiusC * ubuf.radiusC / wrappedTopC;
-
-    float influenceBottomA = ubuf.radiusA * ubuf.radiusA / wrappedBottomA;
-    float influenceBottomB = ubuf.radiusB * ubuf.radiusB / wrappedBottomB;
-    float influenceBottomC = ubuf.radiusC * ubuf.radiusC / wrappedBottomC;
-
-    // vec4 colorA = vec4(0.95, 0.59, 1.0, 1.0);
-    // vec4 colorB = vec4(0.95, 0.42, 1.0, 1.0);
-    // vec4 colorC = vec4(1.0, 0.58, 0.78, 1.0);
-
-    influenceBg = influenceA + influenceB + influenceC + influenceTopA + influenceTopB + influenceTopC + influenceBottomA + influenceBottomB + influenceBottomC;
+    float seeds[200] = float[](0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465, 0.24, 0.13424, 0.6457, 0.234, 0.8754, 0.1234, 0.876, 0.247, 0.4635, 0.465);
+    float influence[200];
+    vec2 particles[200];
 
     fragColor = texture(source, qt_TexCoord0) * ubuf.qt_Opacity;
 
-    float ratioA = influenceA * (ubuf.radiusA / ubuf.strength) / influenceBg;
-    float ratioB = influenceB * (ubuf.radiusB / ubuf.strength) / influenceBg;
-    float ratioC = influenceC * (ubuf.radiusC / ubuf.strength) / influenceBg;
-    float ratioTopA = influenceTopA * (ubuf.radiusA / ubuf.strength) / influenceBg;
-    float ratioTopB = influenceTopB * (ubuf.radiusB / ubuf.strength) / influenceBg;
-    float ratioTopC = influenceTopC * (ubuf.radiusC / ubuf.strength) / influenceBg;
-    float ratioBottomA = influenceBottomA * (ubuf.radiusA / ubuf.strength) / influenceBg;
-    float ratioBottomB = influenceBottomB * (ubuf.radiusB / ubuf.strength) / influenceBg;
-    float ratioBottomC = influenceBottomC * (ubuf.radiusC / ubuf.strength) / influenceBg;
+    float radius[200];
 
-    ratioA = pow(ratioA, ubuf.invert);
-    ratioB = pow(ratioB, ubuf.invert);
-    ratioC = pow(ratioC, ubuf.invert);
-    ratioTopA = pow(ratioTopA, ubuf.invert);
-    ratioTopB = pow(ratioTopB, ubuf.invert);
-    ratioTopC = pow(ratioTopC, ubuf.invert);
-    ratioBottomA = pow(ratioBottomA, ubuf.invert);
-    ratioBottomB = pow(ratioBottomB, ubuf.invert);
-    ratioBottomC = pow(ratioBottomC, ubuf.invert);
+    vec4 colors[3] = vec4[](ubuf.colorA, ubuf.colorB, ubuf.colorC);
 
-    if(influenceA > ubuf.treshold) {
-        fragColor = mix(fragColor, ubuf.colorA, ratioA) * ubuf.qt_Opacity;
-    }
-    if(influenceB > ubuf.treshold) {
-        fragColor = mix(fragColor, ubuf.colorB, ratioB) * ubuf.qt_Opacity;
-    }
-    if(influenceC > ubuf.treshold) {
-        fragColor = mix(fragColor, ubuf.colorC, ratioC) * ubuf.qt_Opacity;
-    }
-    if(influenceTopA > ubuf.treshold) {
-        fragColor = mix(fragColor, ubuf.colorA, ratioTopA) * ubuf.qt_Opacity;
-    }
-    if(influenceTopB > ubuf.treshold) {
-        fragColor = mix(fragColor, ubuf.colorB, ratioTopB) * ubuf.qt_Opacity;
-    }
-    if(influenceTopC > ubuf.treshold) {
-        fragColor = mix(fragColor, ubuf.colorC, ratioTopC) * ubuf.qt_Opacity;
-    }
-    if(influenceBottomA > ubuf.treshold) {
-        fragColor = mix(fragColor, ubuf.colorA, ratioBottomA) * ubuf.qt_Opacity;
-    }
-    if(influenceBottomB > ubuf.treshold) {
-        fragColor = mix(fragColor, ubuf.colorB, ratioBottomB) * ubuf.qt_Opacity;
-    }
-    if(influenceBottomC > ubuf.treshold) {
-        fragColor = mix(fragColor, ubuf.colorC, ratioBottomC) * ubuf.qt_Opacity;
+    for(int i = 0; i < 200; i++) {
+        radius[i] = 5 * random(seeds[i], 0.2);
+
+        float xshift = ubuf.xshift;
+
+        float loopedY = cos(seeds[i]) * (ubuf.gheight) * (1 - t * random(seeds[i], 0.2));
+
+        float loopedX = sin(seeds[i]) * ubuf.gwidth - xshift / (radius[i]);
+
+        particles[i] = vec2(mod(loopedX, gwidth + 10), mod(loopedY, gheight + 50) - 25);
+
+        // radius[i] += 1 * random(seeds[i], t);
+
+        // float D = distance(vec2(x, y), particles[i]);
+
+        // influence[i] = D;
+
+        // totalInfluence += influence[i];
+
+        float d = distance(vec2(x, y), particles[i]);
+
+        vec4 color = colors[int(random(seeds[i], 0.4) * 2)];
+
+        float radius = radius[i];
+
+        radius *= 1 + (ubuf.cava * (int(random(seeds[i], 0.4) + 0.5) - 0.5));
+
+        if(d / 2 < radius) {
+            fragColor = mix(fragColor, color, 0 + d / radius / ubuf.strength);
+        }
     }
 
-    // if(distance(vec2(x, y), vec2(ubuf.pointA_x, ubuf.pointA_y)) < 10) {
-    //     fragColor = vec4(0.0, 0.0, 0.0, 1.0) * ubuf.qt_Opacity;
+    // for(int i = 0; i < 5; i++) {
+    //     float ratio = influence[i] / totalInfluence;
+    //     ratio *= radius / strength;
+    //     fragColor = mix(fragColor, vec4(0.0, 0.0, 0.0, 1.0), ratio / 1.3);
     // }
 
-    // if(distance(vec2(x, y), vec2(ubuf.pointB_x, ubuf.pointB_y)) < 10) {
-    //     fragColor = vec4(0.0, 0.0, 0.0, 1.0) * ubuf.qt_Opacity;
+    // float x1 = sin(seed * t * t) * ubuf.gwidth + ubuf.xshift;
+    // float y1 = cos(seed) * ubuf.gheight * (1 - t);
+
+    // if(distance(vec2(x, y), vec2(x1, y1)) < 5) {
+    //     fragColor = vec4(1.0, 0.0, 0.0, 1.0);
     // }
 
-    // if(distance(vec2(x, y), vec2(ubuf.pointC_x, ubuf.pointC_y)) < 10) {
-    //     fragColor = vec4(0.0, 0.0, 0.0, 1.0) * ubuf.qt_Opacity;
-    // }
 }

@@ -35,6 +35,18 @@ Rectangle {
     // border.width: 1
 
     RectangularGlow {
+        id: shadow
+        visible: !Config.darkMode
+        z: -2
+        anchors.centerIn: pill
+        height: pill.height
+        width: pill.width
+        color: Colors.primary
+
+        cornerRadius: pill.radius
+    }
+
+    RectangularGlow {
         id: glow
         visible: Config.musicMode
 

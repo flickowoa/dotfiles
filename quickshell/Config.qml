@@ -8,7 +8,7 @@ Singleton {
 
     property bool centerPillOnScreen: false
 
-    property bool darkMode: true
+    property bool darkMode: false
 
     property bool musicMode: false
     property bool slowPill: !musicMode
