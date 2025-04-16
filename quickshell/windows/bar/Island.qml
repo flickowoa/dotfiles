@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Widgets
 import Qt5Compat.GraphicalEffects
 import Quickshell.Services.Mpris
+import Quickshell.Hyprland
 
 import "root:components"
 import "root:"
@@ -13,6 +14,7 @@ Rectangle {
     anchors.centerIn: parent
 
     property int pillWidth: songname.width + 200
+    // property int pillWidth: parent.width
     property int pillHeight: Config.pillHeight
 
     property real xshift: 0
@@ -23,6 +25,17 @@ Rectangle {
             easing.type: Easing.OutExpo
         }
     }
+
+     Timer {
+                        id: xshiftReset
+                        interval: 250
+                        running: false
+                        onTriggered: {
+                            xshift = 0;
+                            // cavacon.onValuesChanged();
+                        }
+                    }
+    
 
     height: pillHeight
     width: pillWidth + 20
@@ -53,65 +66,66 @@ Rectangle {
     GaussianBlur {
         id: blur
         source: bright
-        radius: 30
-        samples: 16
-        visible: false
+        radius: 50
+        samples: 32
+        visible: true
         anchors.centerIn: parent
-        height: pillHeight
-        width: pillWidth
+        height: bright.height
+        width: bright.width
         transparentBorder: true
 
-        Behavior on radius {
-            NumberAnimation {
-                duration: Config.slowPill ? 5000 : 0
-                easing.type: Easing.InOutQuad
-            }
-        }
+        // Behavior on radius {
+        //     NumberAnimation {
+        //         duration: Config.slowPill ? 5000 : 0
+        //         easing.type: Easing.InOutQuad
+        //     }
+        // }
 
-        Behavior on samples {
-            NumberAnimation {
-                duration: Config.slowPill ? 5000 : 0
-                easing.type: Easing.InOutQuad
-            }
-        }
+        // Behavior on samples {
+        //     NumberAnimation {
+        //         duration: Config.slowPill ? 5000 : 0
+        //         easing.type: Easing.InOutQuad
+        //     }
+        // }
     }
 
     BrightnessContrast {
         id: bright
         anchors.centerIn: parent
-        height: pillHeight
-        width: pillWidth
+        height: cava.height
+        width: cava.width
+        visible: false
         source: cava
-        brightness: -0.5
-        contrast: 0
+        brightness: -2
+        contrast: 2
 
-        Behavior on brightness {
-            NumberAnimation {
-                duration: Config.slowPill ? 5000 : 0
-                easing.type: Easing.OutExpo
-            }
-        }
+        // Behavior on brightness {
+        //     NumberAnimation {
+        //         duration: Config.slowPill ? 5000 : 0
+        //         easing.type: Easing.OutExpo
+        //     }
+        // }
 
-        Behavior on contrast {
-            NumberAnimation {
-                duration: Config.slowPill ? 5000 : 0
-                easing.type: Easing.OutExpo
-            }
-        }
+        // Behavior on contrast {
+        //     NumberAnimation {
+        //         duration: Config.slowPill ? 5000 : 0
+        //         easing.type: Easing.OutExpo
+        //     }
+        // }
     }
 
     ShaderEffectSource {
         id: cava
         visible: false
-        height: pillHeight
-        width: pillWidth
+        height: pillHeight + 5
+        width: pillWidth + 5
         mipmap: false
         anchors {
             horizontalCenter: parent.horizontalCenter
         }
         sourceItem: contentwrap
-        // live: true
-        // wrapMode: ShaderEffectSource.ClampToEdge
+        live: true
+        wrapMode: ShaderEffectSource.ClampToEdge
         // hideSource: true
     }
 
@@ -142,9 +156,11 @@ Rectangle {
 
             layer.enabled: true
 
+
+
             Pill {
                 id: content
-                // visible: false
+                visible: true
 
                 color: Colors.background
 
@@ -215,9 +231,9 @@ Rectangle {
                         }
                     }
 
-                    property color colorA: Cava.colors[0]
-                    property color colorB: Cava.colors[1]
-                    property color colorC: Cava.colors[2]
+                    property color colorA: Cava.colors[1]
+                    property color colorB: Cava.colors[2]
+                    property color colorC: Cava.colors[0]
 
                     property real minDistance: gwidth / 10
 
@@ -240,16 +256,10 @@ Rectangle {
                         }
                     }
 
-                    Timer {
-                        id: xshiftReset
-                        interval: 250
-                        running: false
-                        onTriggered: {
-                            xshift = 0;
-                        }
-                    }
+                   
 
                     Connections {
+                        id: cavacon
                         target: Cava
                         function onValuesChanged() {
                             let points = [[pointA_x, pointA_y, radiusA, pointA_vx, pointA_vy, angleA], [pointB_x, pointB_y, radiusB, pointB_vx, pointB_vy, angleB], [pointC_x, pointC_y, radiusC, pointC_vx, pointC_vy, angleC]];
@@ -387,7 +397,8 @@ Rectangle {
 
                                 point[0] = x;
                                 point[1] = y;
-                                point[2] = 12 * t;
+                                point[2] = (12 * t) + (xshift/100);
+                                // console.log("point[2]", xshift);
                                 point[3] = vx;
                                 point[4] = vy;
                                 point[5] = angle;
@@ -423,7 +434,30 @@ Rectangle {
     Text {
         id: songname
         // visible: false
-        text: Mpris.players.values[0].trackTitle
+
+        property bool playing: Mpris.players.values[0].isPlaying
+
+        property string activeWindow: ""
+
+        Connections {
+            target: Hyprland
+            function onRawEvent(event) {
+                if (songname.playing) {
+                    return
+                }
+                if (event.name === "activewindow") {
+                    var args = event.data.split(",");
+
+                    var title = args[args.length - 1];
+                    songname.activeWindow = title;
+                    console.log("activewindow", title);
+                    island.xshift = 1000;
+                    xshiftReset.running = true;
+                }
+            }
+        }
+
+        text: playing ? Mpris.players.values[0].trackTitle : activeWindow
         color: Config.darkMode ? Cava.avg_t > 0 ? Colors.background : Colors.on_background : Cava.avg_t > 0 ? Colors.primary : Colors.on_background
         x: xshift
         font.weight: 700

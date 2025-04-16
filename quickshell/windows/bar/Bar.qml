@@ -15,10 +15,18 @@ PanelWindow {
     id: topbar
 
     WlrLayershell.layer: WlrLayer.Bottom
+    exclusionMode: ExclusionMode.Ignore
+
+    Process {
+        id: barCol
+        running: true
+        // hyprctl keyword monitor "eDP-2,addreserved,100,0,0,0"
+        command: ["hyprctl", "keyword", "monitor", `,addreserved,${Config.barHeight + Config.barVMargin + 15},0,0,0`]
+    }
 
     color: "transparent"
 
-    height: Config.barHeight + Config.barVMargin + 15
+    height: topbar.childrenRect.height
 
     anchors {
         top: true

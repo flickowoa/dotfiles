@@ -37,7 +37,7 @@ Rectangle {
     RectangularGlow {
         id: shadow
         visible: !Config.darkMode
-        z: -2
+        z: Config.darkMode ? 0 : -2
         anchors.centerIn: pill
         height: pill.height
         width: pill.width
@@ -48,6 +48,7 @@ Rectangle {
 
     RectangularGlow {
         id: glow
+
         visible: Config.musicMode
 
         // Behavior on glowRadius {

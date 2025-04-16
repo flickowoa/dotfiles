@@ -5,6 +5,8 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Mpris
 
+import "root:/theme/"
+
 Singleton {
     // property color primary: "black"
 
@@ -28,10 +30,18 @@ Singleton {
         }
     }
 
+    Loader {
+        id: hypr
+        active: false
+        source: "root:/theme/Hypr.qml"
+    }
+
     Process {
         id: colorGen
         running: false
-        command: ["matugen", "image", "/tmp/dreamyv2/cover.png", "--json", "hex"]
+
+        //scheme-content, scheme-expressive, scheme-fidelity, scheme-fruit-salad, scheme-monochrome, scheme-neutral, scheme-rainbow, scheme-tonal-spot
+        command: ["matugen", "image", "/tmp/dreamyv2/cover.png", "--json", "hex", "-t", "scheme-fidelity"]
 
         stdout: SplitParser {
             onRead: data => {
@@ -97,6 +107,9 @@ Singleton {
 
                 colorGen.running = false;
                 coverArtUpdate++;
+
+                hypr.active = false;
+                hypr.active = true;
             }
         }
     }

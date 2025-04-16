@@ -22,6 +22,21 @@ Singleton {
     property color colorC: Qt.rgba(1.0, 0.58, 0.78, 1.0)
     property var colors: [colorA, colorB, colorC]
 
+    function pulse() {
+        for (var i = 0; i < values.length; i++) {
+            values[i] += 0.3;
+        }
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                // decrease values by 0.3 for 1 second
+                for (var i = 0; i < values.length; i++) {
+                    values[i] -= 0.3;
+                }
+                resolve();
+            }, 1000);
+        });
+    }
+
     Process {
         id: cava
         running: true

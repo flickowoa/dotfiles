@@ -11,7 +11,7 @@ Singleton {
     property bool darkMode: false
 
     property bool musicMode: false
-    property bool slowPill: !musicMode
+    property bool slowPill: false
 
     property int barVMargin: Screen.desktopAvailableHeight * 0.01
     property int barHMargin: Screen.desktopAvailableWidth * 0.01
