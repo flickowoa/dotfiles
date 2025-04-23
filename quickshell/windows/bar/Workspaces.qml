@@ -17,6 +17,25 @@ Rectangle {
     property int currentIndex: Hyprland.focusedMonitor.activeWorkspace.id
     property var activePill: workspacesRow.children[currentIndex - 1]
 
+    property real xshift: 0
+
+        Behavior on xshift {
+            NumberAnimation {
+                duration: 2000
+                easing.type: Easing.OutExpo
+            }
+        }
+
+    Timer {
+            id: xshiftReset
+            interval: 150
+            running: false
+            onTriggered: {
+                workspaces.xshift = 0;
+                xshiftReset.running = false;
+            }
+        }
+
     Row {
         id: workspacesRow
         anchors.fill: parent
@@ -33,8 +52,9 @@ Rectangle {
                 cava_index: index
                 randomIndex: false
 
-                width: Config.pillWidth * 0.7
+                width: Config.pillWidth * 0.7 
                 height: Config.pillHeight
+
 
                 Text {
                     text: index + 1
@@ -65,15 +85,7 @@ Rectangle {
         property real to_x: activePill.x
         property real from_x: 0
 
-        Timer {
-            id: xshiftReset
-            interval: 150
-            running: false
-            onTriggered: {
-                shaderClip.xshift = 0;
-                xshiftReset.running = false;
-            }
-        }
+        
 
         Connections {
             target: workspaces
@@ -81,7 +93,7 @@ Rectangle {
                 blur.from_x = blur.x;
                 blur.to_x = activePill.x;
                 blur.x = blur.to_x;
-                shaderClip.xshift = (blur.to_x - blur.from_x);
+                workspaces.xshift = (blur.to_x - blur.from_x);
                 xshiftReset.running = true;
             }
         }
@@ -124,14 +136,7 @@ Rectangle {
         height: activePill.height
         width: activePill.width
 
-        property real xshift: 0
-
-        Behavior on xshift {
-            NumberAnimation {
-                duration: 2000
-                easing.type: Easing.OutExpo
-            }
-        }
+        
 
         // color: "transparent"
 
@@ -153,7 +158,7 @@ Rectangle {
                 property real cava: Cava.avg_t
 
                 property real t: 0
-                property real xshift: shaderClip.xshift
+                property real xshift: workspaces.xshift
 
                 property real strength: Config.darkMode ? 80 : 100
 

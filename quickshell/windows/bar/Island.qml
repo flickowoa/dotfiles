@@ -117,8 +117,8 @@ Rectangle {
     ShaderEffectSource {
         id: cava
         visible: false
-        height: pillHeight + 5
-        width: pillWidth + 5
+        height: pillHeight + 5 
+        width: pillWidth + 5 
         mipmap: false
         anchors {
             horizontalCenter: parent.horizontalCenter
@@ -133,8 +133,8 @@ Rectangle {
         id: contentwrap
         // visible: false
         anchors.centerIn: parent
-        width: pillWidth
-        height: pillHeight
+        width: pillWidth 
+        height: pillHeight 
 
         ClippingRectangle {
             id: contentclip
@@ -251,7 +251,7 @@ Rectangle {
                         target: Mpris.players.values[0]
 
                         function onTrackTitleChanged() {
-                            xshift = 10000;
+                            xshift =2000;
                             xshiftReset.running = true;
                         }
                     }
@@ -431,39 +431,103 @@ Rectangle {
             }
         }
     }
-    Text {
-        id: songname
-        // visible: false
 
-        property bool playing: Mpris.players.values[0].isPlaying
 
-        property string activeWindow: ""
+   
 
-        Connections {
-            target: Hyprland
-            function onRawEvent(event) {
-                if (songname.playing) {
-                    return
-                }
-                if (event.name === "activewindow") {
-                    var args = event.data.split(",");
+    
+    // clip: true 
 
-                    var title = args[args.length - 1];
-                    songname.activeWindow = title;
-                    console.log("activewindow", title);
-                    island.xshift = 1000;
-                    xshiftReset.running = true;
-                }
-            }
+    Rectangle {
+        id: songnameclip
+        anchors.fill: parent
+        color: "transparent"
+        radius: content.radius
+
+        clip: true
+
+        FastBlur {
+            source: songname
+            anchors.fill: songname
+
+            radius: xshift/15
+            transparentBorder: true
         }
 
-        text: playing ? Mpris.players.values[0].trackTitle : activeWindow
-        color: Config.darkMode ? Cava.avg_t > 0 ? Colors.background : Colors.on_background : Cava.avg_t > 0 ? Colors.primary : Colors.on_background
-        x: xshift
-        font.weight: 700
-        font.pixelSize: 20
-        anchors.centerIn: parent
+        Text {
+            id: songname
+            visible: false
+            // x: parent.width/2 - songname.width/2 - xshift
+
+            // function onTextChanged() {
+            //     x = 100
+            //     // wait for 1 second
+            //     Promise.all([
+            //         new Promise(resolve => setTimeout(resolve, 1000))
+            //     ]).then(() => {
+            //         x = 0
+            //     });
+            // }
+
+            y: parent.height / 2 - songname.height / 2 + xshift/20
+
+            property bool playing: Mpris.players.values[0].isPlaying
+
+            property string activeWindow: ""
+
+
+            Connections {
+                target: Hyprland
+                function onRawEvent(event) {
+                    if (songname.playing) {
+                        return
+                    }
+                    if (event.name === "activewindow") {
+                        var args = event.data.split(",");
+
+                        var title = args[args.length - 1];
+                        
+                        songname.activeWindow = title;
+
+                        island.xshift = 1000;
+                        
+                        xshiftReset.running = true;
+                    }
+                }
+            }
+
+            text: ""
+
+            property string nextText: playing ? Mpris.players.values[0].trackTitle : activeWindow
+
+            Timer {
+                id: updateText
+                interval: 150
+                running: true
+                onTriggered: {
+                    songname.text = songname.nextText;
+                }
+            }
+
+            // on nextText changed
+
+            onNextTextChanged: {
+                // console.log("nextText changed", songname.nextText);
+                updateText.running = true;
+            }
+            
+
+            color: Config.darkMode ? Cava.avg_t > 0 ? Colors.background : Colors.on_background : Cava.avg_t > 0 ? Colors.primary : Colors.on_background
+            font.weight: 700
+            font.pixelSize: 20
+            anchors {
+                // verticalCenter: parent.verticalCenter
+                horizontalCenter: parent.horizontalCenter
+            }
+        }
     }
+
+    
 
     // DropShadow {
     //     anchors.fill: songname
