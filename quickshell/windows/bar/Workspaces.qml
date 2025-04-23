@@ -145,6 +145,14 @@ Rectangle {
         Rectangle {
             id: shader
             color: Config.darkMode ? Colors.on_primary : Cava.colors[2]
+
+            Behavior on color {
+                ColorAnimation {
+                    duration: 1000
+                    easing.type: Easing.InOutQuad
+                }
+            }
+
             anchors.fill: parent
 
             layer.enabled: true

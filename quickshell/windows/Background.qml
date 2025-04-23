@@ -140,6 +140,20 @@ PanelWindow {
             property color colorFg: Colors.primary
             property color colorBg: Colors.background
 
+            Behavior on colorBg {
+                ColorAnimation {
+                    duration: 1000
+                    easing.type: Easing.InOutQuad
+                }
+            }
+
+            Behavior on colorFg {
+                ColorAnimation {
+                    duration: 1000
+                    easing.type: Easing.InOutQuad
+                }
+            }
+
             property color colorA: Cava.colors[0]
             property color colorB: Cava.colors[1]
             property color colorC: Cava.colors[2]

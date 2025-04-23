@@ -12,6 +12,11 @@ layout(std140, binding = 0) uniform buf {
 
     uniform vec4 colorBg;
     uniform vec4 colorFg;
+
+    uniform vec4 colorA;
+    uniform vec4 colorB;
+    uniform vec4 colorC;
+
     uniform float t;
 } ubuf;
 ////////////////
