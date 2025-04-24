@@ -122,7 +122,7 @@ Rectangle {
         Text {
             id: activeTxt
             text: currentIndex
-            color: Config.darkMode ? Colors.primary : Colors.background
+            color: Config.darkMode ? Colors.primary : Cava.onColors[2]
             anchors.centerIn: parent
             font.weight: 900
             font.pixelSize: 20

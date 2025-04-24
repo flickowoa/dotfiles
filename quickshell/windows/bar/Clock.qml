@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 
+import Quickshell.Services.UPower
 import "root:components"
 
 Pill {
@@ -8,6 +9,8 @@ Pill {
         id: sysclock
         precision: SystemClock.Minutes
     }
+
+    property int charge : 0
 
     color: "white"
 

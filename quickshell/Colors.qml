@@ -50,6 +50,8 @@ Singleton {
 
                 Cava.colors = [colors.dark.primary, colors.dark.secondary, colors.dark.tertiary];
 
+                Cava.onColors = [colors.dark.on_primary, colors.dark.on_secondary, colors.dark.on_tertiary];
+
                 if (Config.darkMode) {
                     colors = colors.dark;
                 } else {

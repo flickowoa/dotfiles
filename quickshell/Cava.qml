@@ -17,10 +17,12 @@ Singleton {
     // vec4 colorB = vec4(0.95, 0.42, 1.0, 1.0);
     // vec4 colorC = vec4(1.0, 0.58, 0.78, 1.0);
 
+
     property color colorA: Qt.rgba(0.95, 0.59, 1.0, 1.0)
     property color colorB: Qt.rgba(0.95, 0.42, 1.0, 1.0)
     property color colorC: Qt.rgba(1.0, 0.58, 0.78, 1.0)
     property var colors: [colorA, colorB, colorC]
+    property var onColors: [colorA, colorB, colorC]
 
     function pulse() {
         for (var i = 0; i < values.length; i++) {
