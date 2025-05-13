@@ -8,10 +8,48 @@ Item {
 
     property real avg_t: 0
 
+    Connections {
+        target: Cava
+        property real angle: 0
+
+        onAvg_tChanged: {
+            avg_t = Cava.avg_t;
+            angle += avg_t*2;
+            // speed up at 0 and 360 deg
+            if (angle > 360) {
+                angle = 0;
+            }
+
+
+            borderCol.command = ["hyprctl", "keyword", "general:col.active_border", borderCol.gradient,`${angle}deg`]
+            borderCol.running = true;
+            
+            // console.log("avg_t", avg_t);
+            // shadowRange.running = false;
+            // shadowRange.running = true;
+            // shadowPower.running = false;
+            // shadowPower.running = true;
+        }
+    }
+
     Process {
         id: borderCol
         running: true
-        command: ["hyprctl", "keyword", "general:col.active_border", "0xff" + (Config.darkMode ? Colors.on_background : Colors.secondary_container).toString().replace("#", "")]
+
+        property string color1: "0xff" + (Config.darkMode ? Colors.on_background : Colors.secondary_container).toString().replace("#", "")
+        property string color2: "0xff" + (Config.darkMode ? Colors.background : Colors.tertiary_container).toString().replace("#", "")
+
+        property string gradient: `${color1} ${color2} ${color1} ${color2}`
+
+        
+
+        command: ["hyprctl", "keyword", "general:col.active_border", gradient,`0deg`]
+
+        stdout: SplitParser {
+            onRead: data => {
+                console.log("hyprrrrrrrrrrrrrrrrrrrrrrr", data, borderCol.command);
+            }
+        }
     }
 
     Process {
