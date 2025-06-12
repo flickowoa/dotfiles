@@ -117,7 +117,7 @@
 <div align=center>
     <img align="center" src="./assets/stars.svg">
 
-<a href="https://star-history.com/#flick0/dotfiles&Date">
+<a href="https://star-history.com/#flickowoa/dotfiles&Date">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=flick0/dotfiles&type=Date&theme=dark" />
     <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=flick0/dotfiles&type=Date" />
