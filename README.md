@@ -60,10 +60,38 @@
 </details>
 </div>
 
+<details open>
+    <summary><h3>WIP</h3></summary>
+    
+[zephyr](https://github.com/flickowoa/dotfiles/tree/hyprland-zephyr)
+
+<div align="center">
+
+```ocaml
+    ✨ hyprland / zephyr ✨
+```
+
+[![zephyr](https://private-user-images.githubusercontent.com/77581181/398507689-ef43a88c-dc5a-4c57-ba54-90e7f3a5168f.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDk3MjU5NzksIm5iZiI6MTc0OTcyNTY3OSwicGF0aCI6Ii83NzU4MTE4MS8zOTg1MDc2ODktZWY0M2E4OGMtZGM1YS00YzU3LWJhNTQtOTBlN2YzYTUxNjhmLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA2MTIlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNjEyVDEwNTQzOVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTUwZTZmZGU4ODI3NWNjOGViODUyN2Q1YzQ0MTlkZDQyMjg2Y2RiZWQ5YjNjMGI3MDUwODg0MzY5ODhjM2E3OWImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.nMgWR6bb3F8sS62dGTIck6mraLS-JJtQkFButuY9gt0)](https://github.com/flickowoa/dotfiles/tree/hyprland-zephyr)
+</div>
+
+</details>
+
 <!--###################################################################################################################-->
-<hr>
+
 <details open>
     <summary><h3>Archive</h3></summary>
+
+<hr>
+
+
+[!WARNING]
+
+- archived rices are not maintained and may not work
+
+tho I do plan on making an ags rewrite of dreamy and aurora
+
+
+<hr>
 
 [aurora](https://github.com/flick0/dotfiles/tree/aurora)
 <div align="center">
@@ -103,16 +131,7 @@
 [![cherry-blossom](https://raw.githubusercontent.com/flick0/dotfiles/cherry-blossom/assets/workflow.png)](https://github.com/flick0/dotfiles/tree/cherry-blossom)
 </details>
 
-<hr>
-
-> [!WARNING]
-> - archived rices are not maintained and may not work
-
-> tho I do plan on making an ags rewrite of dreamy and aurora
-
-<hr>
 <!--###################################################################################################################-->
-
 
 <div align=center>
     <img align="center" src="./assets/stars.svg">
