@@ -2,7 +2,7 @@
   all: unset; }
 
 * {
-  font-family: Arial, sans-serif; }
+  font-family: sans-serif; }
 
 .nier-toggle-on {
   opacity: 1;
