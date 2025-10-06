@@ -35,9 +35,9 @@
     <img align="center" src="./assets/themes.svg">
 </div>
 
-> themes are sourcable hyprland configs that change the look of the base config ( which only contains the binds and other "non decorative" config ) 
+> themes are sourceable hyprland configs that change the look of the base config ( which only contains the binds and other "non decorative" config ) 
 
-> more themes are available at the [theme-repo](https://github.com/hyprland-community/theme-repo) ( do note that the theme-repo, including hyprtheme is currently a WIP )
+> more themes are available at the [theme-repo](https://github.com/hyprland-community/theme-repo) ( do note that the theme-repo, including hyprtheme, is currently a WIP )
 
 <div>
 <details open>
@@ -88,7 +88,7 @@
 
 - archived rices are not maintained and may not work
 
-tho I do plan on making an ags rewrite of dreamy and aurora
+though I do plan on making an ags rewrite of dreamy and aurora
 
 
 <hr>
