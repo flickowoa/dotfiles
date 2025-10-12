@@ -47,7 +47,7 @@ A rice inspired by `NieR:Automata` ui
     - ### Apply theme
       
       - manual
-         > add this under the `$THEME`` variable in `hyprland.conf`
+         > add this under the `$THEME` variable in `hyprland.conf`
          > ```
          > $yorha=$THEME/yorha
          > source=$yorha/theme.conf
