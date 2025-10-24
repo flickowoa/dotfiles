@@ -32,6 +32,8 @@ A rice inspired by `NieR:Automata` ui
         > install from https://github.com/flick0/sttt
         #### AGS (fork of v1.8.2 with patches)
         > install from https://github.com/striped-bass/ags
+        #### Unimatrix (Angelic fork) 
+        > install from https://github.com/striped-bass/unimatrix
     - ### Install and enable `hyprbars` plugin via `hyprpm`
       > ```sh
       > hyprpm update
