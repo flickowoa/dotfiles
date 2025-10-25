@@ -48,6 +48,7 @@ export const BluetoothGroup = ({
                 {}
               );
               return NierDropDownButton({
+                useAssetsDir: passAssetsDir,
                 label: device.name,
                 current: device_current,
                 options: device_options,
