@@ -8,7 +8,7 @@ const { Label } = Widget;
 
 export const BluetoothGroup = ({
   go_to = async (buttons, parent_button) => {},
-  enabled = Variable(Bluetooth.enabled ? "YES" : "NO", {}),
+  enabled = Variable(Bluetooth.enabled ? "Yes" : "No", {}),
   passAssetsDir = assetsDir
 }) => {
   return [
@@ -16,15 +16,15 @@ export const BluetoothGroup = ({
     NierDropDownButton({
       useAssetsDir: passAssetsDir,
       font_size: button_label_2,
-      label: "enabled",
+      label: "Enabled",
       current: enabled,
-      options: Variable(["YES", "NO"], {}),
+      options: Variable(["Yes", "No"], {}),
       popup_x_offset: SCREEN_WIDTH / 4,
       connections: [
         [
           enabled,
           (self) => {
-            Bluetooth.enabled = enabled.value == "YES";
+            Bluetooth.enabled = enabled.value == "Yes";
           },
         ],
       ],
@@ -32,7 +32,7 @@ export const BluetoothGroup = ({
     NierButton({
       useAssetsDir: passAssetsDir,
       font_size: button_label_2,
-      label: "devices",
+      label: "Devices",
       handleClick: async (self, event) => {
         go_to(
           [
@@ -42,9 +42,9 @@ export const BluetoothGroup = ({
               classNames: ["heading"],
             }),
             ...Array.from(Bluetooth.devices).map((device) => {
-              let device_options = Variable(["CONNECTED", "DISCONNECTED"], {});
+              let device_options = Variable(["Connected", "Disconnected"], {});
               let device_current = Variable(
-                device.connected ? "CONNECTED" : "DISCONNECTED",
+                device.connected ? "Connected" : "Disconnected",
                 {}
               );
               return NierDropDownButton({
@@ -56,7 +56,7 @@ export const BluetoothGroup = ({
                   [
                     device_current,
                     (self) => {
-                      if (device_current.value == "CONNECTED") {
+                      if (device_current.value == "Connected") {
                         device.setConnection(false);
                       } else {
                         device.setConnection(true);

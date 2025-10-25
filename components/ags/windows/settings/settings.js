@@ -245,7 +245,7 @@ const NierSettingPane = (
             NierButton({
               useAssetsDir: parentAssetsDir,
               font_size: 30,
-              label: "SOUND",
+              label: "Sound",
               handleClick: async (self, event) => {
                 page1_selected = ensure_only_selected(self, page1_selected);
                 await go_page2(volume_page(go_page3), self).catch((e) => {
@@ -256,7 +256,7 @@ const NierSettingPane = (
             NierButton({
               useAssetsDir: parentAssetsDir,
               font_size: 30,
-              label: "WIFI",
+              label: "Wi-Fi",
               handleClick: async (self, event) => {
                 await go_page2(wifi_page(), self).catch((e) => {
                   console.log(e);
@@ -266,7 +266,7 @@ const NierSettingPane = (
             NierButton({
               useAssetsDir: parentAssetsDir,
               font_size: 30,
-              label: "BLUETOOTH",
+              label: "Bluetooth",
               handleClick: async (self, event) => {
                 await go_page2(bluetooth_page(go_page3), self).catch(
                   (e) => {
@@ -278,7 +278,7 @@ const NierSettingPane = (
             NierButton({
               useAssetsDir: parentAssetsDir,
               font_size: 30,
-              label: "POWER",
+              label: "Power",
               handleClick: async (self, event) => {
                 await go_page2(power_page(), self).catch((e) => {
                   console.log(e);

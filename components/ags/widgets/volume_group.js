@@ -51,8 +51,8 @@ export const VolumeGroup = ({
 }) => {
   return [
     Label({ hpack: "start", label: "VOLUME", classNames: ["heading"] ,css:`margin-top: ${settings_title_top}px;margin-bottom: ${settings_title_bottom}px;`}),
-    volume_slider({useAssetsDir: passAssetsDir, type: "speaker", volume_ratio: volume_ratio }),
-    volume_slider({useAssetsDir: passAssetsDir, type: "microphone", volume_ratio: mic_volume_ratio }),
+    volume_slider({useAssetsDir: passAssetsDir, type: "Speaker", volume_ratio: volume_ratio }),
+    volume_slider({useAssetsDir: passAssetsDir, type: "Microphone", volume_ratio: mic_volume_ratio }),
     NierButton({
       useAssetsDir: passAssetsDir,
       container_style: "padding-top: 40px;",

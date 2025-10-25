@@ -6,7 +6,7 @@ import { SCREEN_WIDTH,assetsDir } from "../util.js";
 const { Label } = Widget;
 
 export const WifiGroup = ({
-  enabled = Variable(Network.wifi.enabled ? "YES" : "NO", {}),
+  enabled = Variable(Network.wifi.enabled ? "Yes" : "No", {}),
   current_ssid = Variable("", {}),
   current_networks = Variable(["loading..."], {}),
   go_to = (buttons, self) => {},
@@ -17,9 +17,9 @@ export const WifiGroup = ({
     NierDropDownButton({
       useAssetsDir: passAssetsDir,
       font_size: button_label_2,
-      label: "enabled",
+      label: "Enabled",
       current: enabled,
-      options: Variable(["YES", "NO"], {}),
+      options: Variable(["Yes", "No"], {}),
       popup_x_offset: SCREEN_WIDTH / 4,
       connections: [
         [
@@ -33,7 +33,7 @@ export const WifiGroup = ({
     NierDropDownButton({
       useAssetsDir: passAssetsDir,
       font_size: button_label_2,
-      label: "connect",
+      label: "Connect",
       current: current_ssid,
       options: current_networks,
       popup_x_offset: SCREEN_WIDTH / 4,
