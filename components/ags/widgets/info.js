@@ -11,6 +11,10 @@ import { assetsDir,dark } from "../util.js";
 const { Box, Label, Icon, Button } = Widget;
 const { execAsync } = Utils;
 
+function capitalize_first_letter(val) {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
 const SysTray = () =>
   Box({
     hpack: "end",
@@ -61,7 +65,7 @@ export const Info = ({
       }),
       NierButton({
         useAssetsDir,
-        label:dark.value?"dark":"light",
+        label:capitalize_first_letter(dark.value?"dark":"light"),
         handleClick: async (self,event) => {
           execAsync(`ags -b settings -r App.closeWindow("settings")`)
           execAsync(`ags -b bg_settings -r App.closeWindow("bg_settings")`).catch(print).then(print)

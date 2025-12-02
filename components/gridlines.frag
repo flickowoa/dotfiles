@@ -1,10 +1,9 @@
-//
-// Example blue light filter shader.
-// 
+#version 300 es
 
 precision mediump float;
-varying vec2 v_texcoord;
+in vec2 v_texcoord;
 uniform sampler2D tex;
+out vec4 fragColor;
 
 void main() {
 	vec4 pixColor = texture2D(tex, v_texcoord);
@@ -14,8 +13,6 @@ void main() {
 			pixColor[0] *= 0.97;
 			pixColor[1] *= 0.97;
 			pixColor[2] *= 0.97;
-
-		// pixColor = vec4(0.10980392156,0.10588235294 ,0.09411764705 ,1);
     }
-	gl_FragColor = pixColor;
+	fragColor = pixColor;
 }
