@@ -6,7 +6,7 @@ in vec2 v_texcoord;
 uniform sampler2D tex;
 out vec4 fragColor;
 float width;
-float limbShading = 0.55;
+float limbShading = 0.45;
 float gridSpacing = 10.0;
 float gridShading = 0.97;
 
