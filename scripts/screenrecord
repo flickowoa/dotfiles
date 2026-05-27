@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# my additional script for recording videos with same UI anims and stuff
+# Single toggle: if recording → stop, if not → start
+TARGET_DIR="$HOME/Videos/Recordings"
+mkdir -p "$TARGET_DIR"
+PID_FILE="/tmp/hypr-record.pid"
+SOCK="$XDG_RUNTIME_DIR/astal/yorha.sock"
+
+if [ -f "$PID_FILE" ] && kill -0 $(cat "$PID_FILE") 2>/dev/null; then
+    # Stop recording
+    PID=$(cat "$PID_FILE")
+    echo "record-stop" | socat - UNIX-CONNECT:"$SOCK"
+    kill -INT "$PID" 2>/dev/null
+    rm "$PID_FILE"
+    notify-send -t 3000 "Screen Recorder" "Recording saved to ~/Videos/Recordings/" -i video-x-generic
+else
+    # Start recording
+    FILENAME="$TARGET_DIR/$(date +%Y-%m-%d_%H-%M-%S).mp4"
+    echo "record-start" | socat - UNIX-CONNECT:"$SOCK"
+    notify-send -t 2000 "Screen Recorder" "Recording started" -i video-x-generic
+    wf-recorder -f "$FILENAME" -p preset=ultrafast -p crf=28 &
+    echo $! > "$PID_FILE"
+fi

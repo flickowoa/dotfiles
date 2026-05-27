@@ -1,0 +1,16 @@
+# Use custom format:
+format="$directory$git_branch$character"
+
+# Prompt symbols 
+[character]
+success_symbol = "[ ᐉ](bright-green bold)"
+error_symbol = "[ ᐉ](bright-red)"
+vicmd_symbol = "[ ᐉ](bright-yellow)"
+
+[directory]
+format = "[▉]($style)[(bg:background fg:none) $path ](inverted)[▕]($style)"
+style = "bg:background fg:none"
+
+[git_branch]
+format = "[▉]($style)[(bg:background fg:none) \ue725 $branch ](inverted)[▕]($style)"
+style = "bg:background fg:none"

@@ -1,0 +1,2 @@
+#! /bin/bash
+printf "[general]\nframerate=160\nbars=24\n[output]\nmethod = raw\nraw_target = /dev/stdout\ndata_format = ascii\nascii_max_range = 1000\n[smoothing]\nintegral = 0\nwaves=1\ngravity = 10000000\n[input]\nmethod=pulse\nsource=auto" | cava -p /dev/stdin 

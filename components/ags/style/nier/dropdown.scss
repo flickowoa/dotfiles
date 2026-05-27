@@ -1,0 +1,76 @@
+@import "../color";
+@import "./button";
+
+$border_size: 4px;
+$border_dist: 3px;
+
+.nier-option-header {
+  margin: 0px;
+  min-height: 3px;
+  background: $highlight;
+  padding: 8px;
+  .nier-option-header-inner {
+    background: $brown;
+    min-height: 1px;
+    min-width: 200px;
+  }
+}
+
+.nier-option-container.nier-option-selected {
+  .nier-button label {
+    font-family: FOT-Rodin Pro B, sans-serif;
+    background: linear-gradient(
+      90deg,
+      mix($highlight, $brown, 80%) 0%,
+      mix($highlight, $brown, 80%) 50%,
+      $brown 50%,
+      $brown 100%
+    );
+    background-size: 200%;
+    min-width: 200px;
+    color: $brown;
+    transition: background 0.3s cubic-bezier(0.15, 0.79, 0, 1);
+  }
+  .nier-button-hover label {
+    background-position: -100%;
+    color: $highlight;
+    transition: background 0.3s cubic-bezier(0.15, 0.79, 0, 1);
+  }
+}
+
+.nier-option-container {
+  * {
+    all: unset;
+  }
+
+  margin: 0px;
+  .nier-button label {
+    background: linear-gradient(
+      90deg,
+      $highlight 0%,
+      $highlight 50%,
+      $brown 50%,
+      $brown 100%
+    );
+    background-size: 200%;
+    min-width: 200px;
+    color: $brown;
+    transition: background 0.3s cubic-bezier(0.15, 0.79, 0, 1);
+  }
+  .nier-button-hover label {
+    background-position: -100%;
+    color: $highlight;
+    transition: background 0.3s cubic-bezier(0.15, 0.79, 0, 1);
+  }
+  .nier-button-hover-icon-hidden {
+    opacity: 0;
+    transition: opacity 0.1s ease-out;
+  }
+  .nier-button-hover-icon-visible {
+    opacity: 1;
+    transition: opacity 0.1s ease-out;
+  }
+  .nier-button-hover-icon {
+    margin-left: 20px;
+  }
+}

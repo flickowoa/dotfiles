@@ -1,0 +1,147 @@
+@import "../color";
+
+.nowplaying-hider {
+  background: $brown;
+  min-width: 1px;
+}
+
+.cava-vis {
+  background: transparent;
+  margin-right: 0px;
+  margin-top: calc(3.5rem + 5px);
+  margin-bottom: calc(2rem + 5px);
+  margin-left: -5px;
+  transition: background 1s ease;
+}
+
+.cava-vis.hiding {
+  background: rgba($brown,0.5);
+  transition: background 1s ease;
+}
+
+.cava-bar-thick {
+  background: linear-gradient(
+    120deg,
+    $brown 0%,
+    $brown 40%,
+    rgba($brown, 0.25) 40%,
+    rgba($brown, 0.25) 60%,
+    $brown 60%,
+    $brown 100%,
+  );
+  background-size: 100% 10%;
+  min-width: 25px;
+}
+
+.cava-bar-thin {
+  background: linear-gradient(
+    250deg,
+    $brown 0%,
+    $brown 40%,
+    rgba($brown, 0.25) 40%,
+    rgba($brown, 0.25) 60%,
+    $brown 60%,
+    $brown 100%,
+  );
+  background-size: 100% 10%;
+  min-width: 15px;
+  margin-right: 5px;
+}
+
+.player-buttons.pressed:hover {
+  .heading {
+    text-shadow: 5px 5px 1px rgba($brown, 0.25);
+    padding-bottom: 0px;
+    padding-right: 0px;
+    margin-right: 5px;
+    margin-top: 5px;
+    transition: padding 0.3s cubic-bezier(0, 1, 0, 1),
+      margin 0.3s cubic-bezier(0, 1, 0, 1),
+      text-shadow 0.3s cubic-bezier(0, 1, 0, 1);
+  }
+}
+
+.player-buttons:hover {
+  .heading {
+    text-shadow: 10px 10px 1px rgba($brown, 0.25);
+    padding-bottom: 5px;
+    padding-right: 5px;
+    margin-right: 0px;
+    margin-top: 0px;
+    transition: padding 0.3s cubic-bezier(0, 1, 0, 1),
+      margin 0.3s cubic-bezier(0, 1, 0, 1),
+      text-shadow 0.3s cubic-bezier(0, 1, 0, 1);
+  }
+}
+
+.player-buttons {
+  .heading {
+    font-size: 3.5rem;
+    margin-bottom: -10px;
+    margin-top: 5px;
+    text-shadow: 5px 5px 1px rgba($brown, 0.25);
+    transition: padding 0.3s cubic-bezier(0, 1, 0, 1),
+      margin 0.3s cubic-bezier(0, 1, 0, 1),
+      text-shadow 0.3s cubic-bezier(0, 1, 0, 1);
+  }
+}
+
+.image-matrix-row.nohover {
+  margin: 0px;
+  transition: margin 0.1s cubic-bezier(1, -0.01, 1, 0.1);
+}
+
+.image-matrix-row.hover {
+  margin-left: -15px;
+}
+
+.image-matrix-container {
+  border: $brown 10px solid;
+  margin-right: 10px;
+}
+
+@mixin glow($time) {
+  animation: glow $time ease;
+}
+
+.nowplaying-info-container .heading {
+  font-size: 2rem;
+  margin-top: 5px;
+  font-family: FOT-Rodin Pro B, sans-serif;
+  text-shadow: 5px 5px 1px rgba($brown, 0.25);
+}
+
+.nowplaying-info-cursor.hidden {
+  animation: cursor-exit 1s cubic-bezier(0, 0.86, 0, 1) forwards;
+}
+
+.nowplaying-info-cursor {
+  background: linear-gradient(
+    180deg,
+    $brown 80%,
+    transparent 80%,
+    transparent 90%,
+    $brown 100%
+  );
+  min-width: 20px;
+  animation: cursor-enter 1s cubic-bezier(0, 0.86, 0, 1) forwards;
+}
+
+@keyframes cursor-enter {
+  0% {
+    margin-bottom: calc(2rem + 7px);
+  }
+  100% {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+}
+@keyframes cursor-exit {
+  0% {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+  100% {
+    margin-bottom: calc(2rem + 7px);
+  }
+}

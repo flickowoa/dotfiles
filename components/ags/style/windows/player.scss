@@ -1,0 +1,13 @@
+.player-content {
+    transition: margin-right 0.32s cubic-bezier(0.15, 0.79, 0, 1),
+                opacity 0.25s ease;
+    margin-right: 0;
+    opacity: 1;
+
+    &.player-closing {
+        margin-right: -700px;
+        opacity: 0;
+        transition: margin-right 0.32s cubic-bezier(0.15, 0.79, 0, 1),
+                    opacity 0.25s ease;
+    }
+}

@@ -1,0 +1,85 @@
+@import "../color.scss";
+
+$accent_border: 3px;
+$accent_border_dist: 3px;
+$button_dist_from_ruler: 14px;
+$button_spacing_vertical: 10px;
+$button_spacing_horizontal: 5px;
+
+$border_size: 3px;
+$border_dist: 3px;
+
+// top-down borders
+.nier-slider-button-top,
+.nier-slider-button-bottom {
+  background: transparent;
+  min-height: 0px;
+}
+
+.nier-slider-button-top-hover {
+  background: $brown;
+  min-height: $border_size;
+  margin-bottom: $border_dist;
+}
+
+.nier-slider-button-bottom-hover {
+  background: $brown;
+  min-height: $border_size;
+  margin-top: $border_dist;
+}
+
+.nier-slider-button-box {
+  margin-bottom: 10px;
+}
+
+//.nier-long-button-container = pointer + buttons
+.nier-long-button-group-vertical .nier-slider-button-container {
+  margin-bottom: $button_spacing_vertical;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+// same but horizontal
+.nier-long-button-group .nier-slider-button-container {
+  margin-right: $button_spacing_horizontal;
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+
+.nier-slider-button {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background: linear-gradient(
+    90deg,
+    rgba($brown, 0.25) 0%,
+    rgba($brown, 0.25) 50%,
+    $brown 50%,
+    $brown 100%
+  );
+  background-size: 200%;
+  transition: background 1s cubic-bezier(0.15, 0.79, 0, 1);
+  label {
+    font-size: 1.5rem;
+    color: $brown;
+    padding: 8px 8px 7px;
+  }
+  transition: background 0.1s cubic-bezier(0.15, 0.79, 0, 1),
+    border-color 0.3s ease-in-out, color 0.3s ease-in-out,
+    box-shadow 0.4s ease-in-out;
+}
+
+.nier-slider-button-hover {
+  padding-top: calc(0px - #{$border_dist} - #{$border_size});
+  padding-bottom: calc(0px - #{$border_dist} - #{$border_size});
+
+  label {
+    font-size: 1.5rem;
+    padding: 8px 8px 7px;
+    color: $tan;
+  }
+  background-position: -100%;
+
+  transition: background 1s cubic-bezier(0.15, 0.79, 0, 1);
+}

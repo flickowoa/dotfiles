@@ -1,0 +1,116 @@
+@import "../color";
+
+.notify-card {
+    opacity: 0;
+}
+
+.notify-card-accent {
+    background: $brown;
+    min-width: 60px;
+}
+
+.notify-card-accent.critical {
+    background: $accent;
+}
+
+.notify-card-accent.low {
+    background: $accent2;
+}
+
+
+.notify-card.enter {
+    opacity: 1;
+
+    .notify-card-accent{
+        min-width: 10px;
+        transition: min-width 0.2s cubic-bezier(.03,.59,.08,.97);
+        transition-delay: 0.15s;
+    }
+}
+
+.notify-card.leave {
+    opacity: 0;
+}
+
+
+.notify-card-hider {
+    background:linear-gradient(
+            90deg,
+            transparent 0%,
+            transparent 50%,
+            $brown 50%,
+            $brown 100%
+        );
+    background-size: 200% 100%;
+
+    &.enter {
+        background-position: -100% 0;
+        transition: background-position 0.3s cubic-bezier(0.15, 0.79, 0, 1);
+    }
+
+    &.enter-phase-2 {
+        background-position: -200% 0;
+        transition: background-position 0.3s cubic-bezier(.48,.09,.82,-0.12);
+    }
+
+    &.leave {
+        background-position: -100% 0;
+        transition: background-position 0.3s cubic-bezier(0.15, 0.79, 0, 1);
+    }
+
+    &.leave-phase-2 {
+        background-position: 0 0;
+        transition: background-position 0.3s cubic-bezier(.48,.09,.82,-0.12);
+    }
+}
+
+.notify-card-hider.right {
+
+    background:linear-gradient(
+            90deg,
+            $brown 0%,
+            $brown 50%,
+            transparent 50%,
+            transparent 100%,   
+        );
+    background-size: 100% 100%;
+
+    &.enter {
+        background-position: -100% 0;
+        transition: background-position 0.3s cubic-bezier(0.15, 0.79, 0, 1);
+    }
+
+    &.enter-phase-2 {
+        background-position: -200% 0;
+        transition: background-position 0.3s cubic-bezier(.48,.09,.82,-0.12);
+    }
+
+    &.leave {
+        background-position: -100% 0;
+        transition: background-position 0.3s cubic-bezier(0.15, 0.79, 0, 1);
+    }
+
+    &.leave-phase-2 {
+        background-position: 0 0;
+        transition: background-position 0.3s cubic-bezier(.48,.09,.82,-0.12);
+    }
+}
+
+
+
+.notify-card-content {
+    min-height: 100px;
+    min-width: 500px;
+    padding: 20px;
+    padding-left: 20px;
+    background: $highlight;
+    .notify-card-title {
+        font-size: 1.5rem;
+        font-weight: bolder;
+        color: $brown;
+    }
+    .notify-card-body {
+        font-size: 1.2rem;
+        color: $darkBrown;
+    }
+}

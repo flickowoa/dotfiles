@@ -1,0 +1,111 @@
+@import "../color";
+
+$accent_border: 3px;
+$accent_border_dist: 4px;
+$button_dist_from_ruler: 14px;
+$button_spacing_vertical: 10px;
+$button_spacing_horizontal: 5px;
+
+@mixin long-button-hover {
+  border-top: $brown $accent_border solid;
+  border-bottom: $brown $accent_border solid;
+  padding-top: $accent_border_dist;
+  padding-bottom: $accent_border_dist;
+  label {
+    padding-top: calc(8px - #{$accent_border_dist});
+    padding-bottom: calc(7px - #{$accent_border_dist});
+    background-position: -100%;
+    font-family: FOT-Rodin Pro B, sans-serif;
+    color: $tan;
+  }
+}
+
+@mixin long-button {
+  border: none;
+  border-top: transparent $accent_border solid;
+  border-bottom: transparent $accent_border solid;
+  min-width: 190px;
+}
+
+.nier-toggle-on {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.nier-toggle-off {
+  opacity: 0.3;
+  transition: opacity 0.3s ease-in-out;
+}
+
+// the actual button looking thing ( is actuaally a label :0 )
+.nier-long-button label {
+  font-size: 2rem;
+  font-family: FOT-Rodin Pro M, sans-serif;
+  background: linear-gradient(
+    90deg,
+    rgba($brown, 0.25) 0%,
+    rgba($brown, 0.25) 50%,
+    $brown 50%,
+    $brown 100%
+  );
+  background-size: 200%;
+  color: $brown;
+  padding: 8px 8px 7px;
+  transition: background 0.1s cubic-bezier(0.15, 0.79, 0, 1),
+    border-color 0.3s ease-in-out, color 0.3s ease-in-out,
+    box-shadow 0.4s ease-in-out;
+}
+
+//.nier-long-button-container = pointer + buttons
+.nier-long-button-group-vertical .nier-long-button-container {
+  margin-bottom: $button_spacing_vertical;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+// same but horizontal
+.nier-long-button-group .nier-long-button-container {
+  margin-right: $button_spacing_horizontal;
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+// top and bottom borders
+.nier-long-button {
+  @include long-button;
+  transition: border 0.3s ease-in-out;
+}
+.nier-long-button-hover {
+  @include long-button-hover;
+  label {
+    transition: background 1s cubic-bezier(0.15, 0.79, 0, 1);
+  }
+}
+
+.nier-long-button-group-ruler {
+  margin-top: 5px;
+  background: linear-gradient(
+    90deg,
+    rgba($brown, 0.25) 7px,
+    transparent 0px,
+    transparent 13px,
+    rgba($brown, 0.25) 13px,
+    transparent 18px
+  );
+  min-width: 20px;
+}
+
+// pointer thing
+.nier-long-button-hover-icon {
+  margin-left: -14px;
+  margin-right: $button_dist_from_ruler;
+}
+.nier-long-button-hover-icon-visible {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+.nier-long-button-hover-icon-hidden {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}

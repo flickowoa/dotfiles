@@ -1,0 +1,122 @@
+@import "../color.scss";
+
+$normal_height: 1px;
+$normal_width: 3px;
+$spacing: 2px;
+$filled_width: $normal_width;
+$filled_height: 8px;
+$focus_height: 10px;
+$focus_width: 4px;
+
+$end_gap: 7px;
+$end_width: 4px;
+
+.nier-slider-size {
+  margin: 0px;
+  min-height: calc(#{$focus_height} * 2);
+}
+
+.nier-slider-end {
+  margin: 0px;
+  margin-top: calc(0px - #{$end_gap});
+  margin-bottom: calc(0px - #{$end_gap});
+  margin-left: calc(
+    0px - #{$spacing} - (#{$normal_width} - (#{$normal_width} - #{$end_width}) /
+          2)
+  );
+  margin-right: calc(
+    #{$spacing} + (#{$normal_width} - (#{$normal_width} + #{$end_width}) / 2)
+  );
+  background: linear-gradient(
+    0deg,
+    $highlight 5%,
+    transparent 5%,
+    transparent 95%,
+    $highlight 95%
+  );
+  min-width: 1px;
+}
+
+.nier-slider-boxes.focus .inner {
+  background: $highlight;
+  border: none;
+  box-shadow: 0px 0px 2px 1px transparentize($highlight, 0.5);
+  animation: to_focus 0.5s ease forwards, blink 2s ease infinite 1s;
+}
+
+.nier-slider-boxes.filled .inner {
+  border: none;
+  margin-top: calc(#{$focus_height} - #{$filled_height});
+  margin-bottom: calc(#{$focus_height} - #{$filled_height});
+  animation: focus_to_fill 0.3s linear forwards;
+}
+
+.nier-slider-boxes .inner {
+  margin: $spacing;
+  border: none;
+  min-height: $normal_height;
+  min-width: calc(#{$normal_width});
+  background: $tan;
+  animation: focus_to_normal 0.3s ease forwards;
+}
+
+@keyframes blink {
+  0% {
+    background: $highlight;
+    box-shadow: 0px 0px 2px 1px transparentize($highlight, 0.5);
+  }
+  50% {
+    background: $tan;
+    box-shadow: 0px 0px 2px 1px transparentize($highlight, 1);
+  }
+  0% {
+    background: $highlight;
+    box-shadow: 0px 0px 2px 1px transparentize($highlight, 0.5);
+  }
+}
+
+@keyframes focus_to_normal {
+  0% {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  100% {
+    margin-top: calc(#{$focus_height} - #{$normal_height});
+    margin-bottom: calc(#{$focus_height} - #{$normal_height});
+  }
+}
+
+@keyframes to_focus {
+  0% {
+    margin-top: calc(#{$focus_height} - #{$normal_height}* 2);
+    margin-bottom: calc(#{$focus_height} - #{$normal_height}* 2);
+  }
+  70% {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+  80% {
+    margin-top: -5px;
+    margin-bottom: -5px;
+  }
+  100% {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+}
+
+@keyframes focus_to_fill {
+  0% {
+    margin-top: 0;
+    margin-bottom: 0;
+    background: $highlight;
+    box-shadow: 0px 0px 5px 2px $highlight;
+  }
+  25% {
+    margin-top: calc(#{$focus_height} - #{$filled_height});
+    margin-bottom: calc(#{$focus_height} - #{$filled_height});
+  }
+  100% {
+    background: $tan;
+  }
+}

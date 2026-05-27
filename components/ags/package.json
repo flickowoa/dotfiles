@@ -1,0 +1,10 @@
+{
+    "name": "yorha-bar",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "astal": "*",
+        "ags": "*",
+        "gnim": "*"
+    }
+}

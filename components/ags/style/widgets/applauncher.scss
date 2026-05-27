@@ -1,0 +1,34 @@
+@import "../color";
+
+.app-launcher-search {
+  margin-left: 35px;
+  margin-right: 60px;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: $brown;
+  background-color: $highlight;
+  padding: 6px;
+}
+
+.app-launcher {
+  .nier-long-button-group-ruler {
+    all: unset;
+  }
+  margin-bottom: 100px;
+}
+
+.nier-button {
+  .app-launcher-icon {
+    margin-left: 20px;
+    margin-right: 20px;
+    opacity: 0.5;
+  }
+}
+
+.nier-button-hover {
+  .app-launcher-icon {
+    margin-left: 20px;
+    margin-right: 20px;
+    opacity: 1;
+  }
+}

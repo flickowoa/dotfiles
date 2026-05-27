@@ -1,0 +1,102 @@
+<div>
+    <img src="./assets/title.svg" height="30px">
+</div>
+<img src="https://github.com/flick0/dotfiles/assets/77581181/4b94622c-69f4-4f2d-82c4-7032d6e66ca4">
+<div align="right">
+        do check out the full showcase vid here ~>
+        <a href="https://www.youtube.com/watch?v=YRDbhWHF8bY">
+            <img alt="Youtube" src="https://img.shields.io/badge/YouTube-%23c2bda6.svg?style=for-the-badge&logo=YouTube&logoColor=48463d">
+        </a>
+        <a href="https://www.reddit.com/r/unixporn/comments/18zwfhj/hyprland_yorha/">
+            <img alt="Reddit" src="https://img.shields.io/badge/Reddit-%23c2bda6.svg?style=for-the-badge&logo=Reddit&logoColor=48463d">
+        </a>
+</div>
+
+
+# 👾 YoRHa
+
+A rice inspired by `NieR:Automata` ui
+
+
+## 🔧 my changes (this fork)
+
+heads up - this is my personal fork, putting it up in case any of its usefull.
+stuff i changed or added on top of the original:
+
+- got it all running on **hyprland 0.55**. the old config broke on the newer
+  versions so i fixed the `layerrule` syntax (blur wants `match:namespace` now),
+  the `windowrule` v3 format, and dropped the removed `ignorealpha` rules.
+- rebuilt the bar + widgets on **ags 3.x** (astal + typescript), the old ags 1.x
+  api doesnt exist anymore. lives under `components/ags3/`.
+- reshaped the **status bar** a little to my taste - boxed frames with the
+  detached top/bottom rails, hand-drawn workspace icons, slightly bigger fonts.
+- redid the **workspace switch animation** - a nier-ish triangle wipe that blooms
+  out from the middle then dissolves (`components/ags3/windows/ws_anim`).
+- added an **EXTRAS/** folder with matching YoRHa css themes for whatsapp web and
+  discord, for anyone who wants the whole set.
+
+a lot of this is opinionated to my own setup so feel free to take only the bits
+you want.
+
+
+## 📥 Installation
+> [!IMPORTANT]
+> you need to install the base config found in [master branch](https://github.com/flick0/dotfiles) before installing this (unless you are using the install script)
+
+- ## Manual
+    - ### Dependancies
+        #### Arch
+        > ```sh
+        > paru -S hyprland-git foot grim swww-git fish theme.sh sassc starship cava imagemagick gnome-bluetooth wl-clipboard libdbusmenu-gtk3 gnome-bluetooth-3.0 xorg-xrandr cpio cmake git meson gcc
+        > ```
+        #### STTT
+        > install from https://github.com/flick0/sttt
+        #### AGS (fork of v1.8.2 with patches)
+        > install from https://github.com/striped-bass/ags
+        #### Unimatrix (Angelic fork) 
+        > install from https://github.com/striped-bass/unimatrix
+    - ### Install and enable `hyprbars` plugin via `hyprpm`
+      > ```sh
+      > hyprpm update
+      > hyprpm add https://github.com/hyprwm/hyprland-plugins
+      > hyprpm enable hyprbars
+      > ```
+    - ### Clone to theme folder
+      ```sh
+      mkdir ~/.config/hypr/themes && git clone -b hyprland-yorha https://github.com/flick0/dotfiles ~/.config/hypr/themes/yorha
+      ```
+   
+    
+    - ### Apply theme
+      
+      - manual
+         > add this under the `$THEME` variable in `hyprland.conf`
+         > ```
+         > $yorha=$THEME/yorha
+         > source=$yorha/theme.conf
+         > ```
+      
+      - hyprtheme
+         > soon
+
+- ## ~~Install Script~~ (outdated, will fix soon)
+    ```sh
+    curl -s -L https://raw.githubusercontent.com/flick0/dotfiles/hyprland-yorha/install.sh | bash
+    ```
+    > provided by [@cutie_230](https://discord.com/channels/@me/1193218215380254740) on discord
+
+## ✨ Features
+ - ### Music Widget
+   > https://github.com/flick0/dotfiles/assets/77581181/4c10b974-11e1-41c2-89fe-3a1cfb405fd6
+
+ - ### Slurp clone made in ags
+   > https://github.com/flick0/dotfiles/assets/77581181/efd9363e-47f4-4768-bdd9-3d8d15e5a9c4
+
+ - ### Light/Dark mode with transitions
+   > https://github.com/flick0/dotfiles/assets/77581181/663c9a12-ff65-4130-aa19-7c38cb6e90e6
+
+
+## Thanks to
+- https://www.platinumgames.com/official-blog/article/9624 amazing blog by the creators of NieR:Automata
+- https://github.com/accrazed/YoRHA-UI-BetterDiscord (for the wallpapers)
+- https://codepen.io/RobotsPlay/pen/bGeNGdx (few svgs and for reference)

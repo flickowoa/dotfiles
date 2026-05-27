@@ -1,0 +1,132 @@
+@import "../color";
+@import "../data";
+
+// `..      `..          `.......    `..     `..
+//  `..    `..           `..    `..  `..     `..
+//   `.. `..      `..    `..    `..  `..     `..   `..
+//     `..      `..  `.. `. `..      `...... `.. `..  `..
+//     `..     `..    `..`..  `..    `..     `..`..   `..
+//     `..      `..  `.. `..    `..  `..     `..`..   `..
+//     `..        `..    `..      `..`..     `..  `.. `...
+
+@keyframes selected {
+  0% {
+    margin-right: 35px;
+  }
+  100% {
+    margin-right: 0px;
+  }
+}
+
+.nier-settings-container.opening {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.nier-settings-container.closing {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.nier-geom-bg-cell {
+  opacity: 0;
+}
+
+.nier-geom-bg-cell-enter {
+  opacity: 0.6;
+  transition: opacity 0.4s cubic-bezier(.26,1.22,.37,1.94);
+}
+
+.nier-geom-bg-cell-leave {
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(.55,-0.55,1,.39);
+}
+
+.nier-settings-container {
+  .nier-button-box {
+    margin-right: 60px;
+  }
+
+  .nier-button-box-selected {
+    margin-right: 0px;
+  }
+  .nier-button-container-selected {
+    .nier-button-hover-icon {
+      opacity: 1;
+    }
+  }
+}
+
+.nier-settings-1-container .heading {
+  font-size: 70px;
+  padding-left: 35px;
+}
+
+.nier-settings-2-container .heading {
+  font-size: 70px;
+  padding-left: 35px;
+}
+
+.nier-settings-3-container .heading {
+  font-size: 50px;
+  padding-left: 35px;
+}
+
+.nier-settings-1-container,
+.nier-settings-2-container,
+.nier-settings-3-container,
+.nier-settings-4-container {
+  min-width: calc(#{$screen_width} / 4);
+}
+
+@keyframes container_enter {
+  0% {
+    margin-right: $screen_width;
+    margin-left: calc(-1 * #{$screen_width});
+  }
+  100% {
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+}
+
+.nier-settings-1-container {
+  background: url("../../../wallpapers/nier.png");
+  transition: margin 0.2s cubic-bezier(0.15, 0.79, 0, 1), opacity 1s ease;
+}
+.nier-settings-2-container {
+  background: rgba($tan, 0.9);
+  transition: margin 0.2s cubic-bezier(0.15, 0.79, 0, 1), opacity 1s ease;
+}
+.nier-settings-3-container {
+  background: rgba($tan, 0.6);
+  transition: margin 0.2s cubic-bezier(0.15, 0.79, 0, 1), opacity 1s ease;
+}
+.nier-settings-4-container {
+  background: rgba($tan, 0.4);
+  transition: margin 0.2s cubic-bezier(0.15, 0.79, 0, 1), opacity 1s ease;
+}
+
+.nier-settings-1-container.closing {
+  margin-right: calc(#{$screen_width} / 4);
+  margin-left: calc(-1 * #{$screen_width} / 4);
+  opacity: 0;
+  transition: margin 0.2s cubic-bezier(0.15, 0.79, 0, 1), opacity 0.2s ease;
+}
+.nier-settings-2-container.closing {
+  margin-right: calc(#{$screen_width}/ 4);
+  margin-left: calc(-1 * #{$screen_width}/ 4);
+  opacity: 0;
+  transition: margin 0.4s cubic-bezier(0.15, 0.79, 0, 1), opacity 0.4s ease;
+}
+.nier-settings-3-container.closing {
+  margin-right: calc(#{$screen_width} / 4);
+  margin-left: calc(-1 * #{$screen_width} / 4);
+  opacity: 0;
+  transition: margin 0.6s cubic-bezier(0.15, 0.79, 0, 1), opacity 0.6s ease;
+}
+.nier-settings-4-container.closing {
+  margin-right: calc(#{$screen_width} / 4);
+  margin-left: calc(-1 * #{$screen_width} / 4);
+  opacity: 0;
+  transition: margin 0.8s cubic-bezier(0.15, 0.79, 0, 1), opacity 0.8s ease;
+}

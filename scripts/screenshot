@@ -1,0 +1,2 @@
+#!/usr/bin/bash
+echo "screenshot" | socat - UNIX-CONNECT:$XDG_RUNTIME_DIR/astal/yorha.sock

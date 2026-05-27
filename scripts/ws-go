@@ -1,0 +1,2 @@
+#!/usr/bin/bash
+echo "ws-go $1" | socat - UNIX-CONNECT:/run/user/1000/astal/yorha.sock

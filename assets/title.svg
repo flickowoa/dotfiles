@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="475"
+   height="84"
+   viewBox="0 0 475 84"
+   version="1.1"
+   id="svg1"
+   xml:space="preserve"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs1"><style
+       id="style1">
+      .cls-1 {
+        fill: #48463d;
+      }
+    </style></defs><g
+     id="layer1"
+     transform="translate(0,-8)"><g
+       id="g1"
+       transform="matrix(0.17028958,0,0,0.17028958,0,29.999828)"><path
+         class="cls-1"
+         d="m 0,117.447 90.7,90.7 272.151,-90.7 L 90.7,26.747 Z m 105.983,0 a 17.3,17.3 0 1 1 -17.3,-17.3 17.3,17.3 0 0 1 17.3,17.3 z"
+         id="path1" /><rect
+         class="cls-1"
+         x="340.65799"
+         y="207.84801"
+         width="27.046"
+         height="27.046"
+         transform="rotate(-90,354.1815,221.3715)"
+         id="rect1" /><rect
+         class="cls-1"
+         x="340.65799"
+         width="27.046"
+         height="27.046"
+         transform="rotate(-90,354.1815,13.5235)"
+         id="rect2"
+         y="0" /></g><rect
+       style="fill:#c2bda6;fill-opacity:1;stroke-width:0.812403"
+       id="rect3"
+       width="400"
+       height="66"
+       x="75"
+       y="17" /><rect
+       style="fill:#c2bda6;fill-opacity:1;stroke-width:0.223607"
+       id="rect3-5"
+       width="400"
+       height="5"
+       x="75"
+       y="8" /><rect
+       style="fill:#c2bda6;fill-opacity:1;stroke-width:0.223607"
+       id="rect3-5-2"
+       width="400"
+       height="5"
+       x="75"
+       y="87" /><text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:39.8936px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#48463d;fill-opacity:1;stroke-width:3.32446"
+       x="89.481384"
+       y="64.082436"
+       id="text3"><tspan
+         id="tspan3"
+         x="89.481384"
+         y="64.082436"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:39.8936px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#48463d;fill-opacity:1;stroke-width:3.32446">YoRHa</tspan></text></g></svg>

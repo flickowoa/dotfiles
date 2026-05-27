@@ -1,0 +1,182 @@
+@import "../color.scss";
+
+$border_size: 4px;
+$border_dist: 3px;
+
+.nier-button-container {
+  margin-bottom: 20px;
+}
+
+.nier-button-box-hover-from-selected {
+  .nier-button-top,
+  .nier-button-bottom {
+    opacity: 1;
+    animation: from_border_rev 0.3s ease-out forwards;
+  }
+
+  .nier-button {
+    min-width: 200px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+
+    label {
+      color: $tan;
+    }
+    background-position: -100%;
+
+    transition: background 0.3s cubic-bezier(0.15, 0.79, 0, 1),
+      padding 0.3s ease-out;
+  }
+}
+
+.nier-button-box {
+  margin-right: 20px;
+  transition: margin 0.1s ease-out;
+}
+
+.nier-button-box-selected {
+  .nier-button-top,
+  .nier-button-bottom {
+    opacity: 1;
+    animation: from_border 0.5s ease-out forwards;
+  }
+  margin-right: 0px;
+  transition: margin 0.1s ease-out;
+
+  .nier-button {
+    min-width: 200px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-right: 20px;
+
+    label {
+      color: $tan;
+    }
+    background-position: -100%;
+
+    transition: padding 0.1s ease-out, margin 0.1s ease-out;
+  }
+}
+
+.nier-button-top {
+  opacity: 0;
+  min-height: $border_size;
+  margin-bottom: $border_dist;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 33.33%,
+    $brown 33.33%,
+    $brown 66.66%,
+    transparent 66.66%,
+    transparent 100%
+  );
+  background-size: 300%;
+  background-position: 0%;
+}
+
+.nier-button-bottom {
+  opacity: 0;
+  min-height: $border_size;
+  margin-top: $border_dist;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 33.33%,
+    $brown 33.33%,
+    $brown 66.66%,
+    transparent 66.66%,
+    transparent 100%
+  );
+  background-size: 300%;
+  background-position: 0%;
+}
+
+.nier-button-top-hover,
+.nier-button-bottom-hover {
+  opacity: 1;
+  background-position: -100%;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes to_border {
+  0% {
+    background-position: 0%;
+  }
+  100% {
+    background-position: -100%;
+  }
+}
+
+@keyframes from_border {
+  0% {
+    background-position: -100%;
+  }
+  100% {
+    background-position: -200%;
+  }
+}
+
+@keyframes from_border_rev {
+  0% {
+    background-position: -200%;
+  }
+  100% {
+    background-position: -100%;
+  }
+}
+
+.nier-button {
+  min-width: 200px;
+  margin-top: calc(0px - #{$border_size} - #{$border_dist});
+  margin-bottom: calc(0px - #{$border_size} - #{$border_dist});
+  padding-top: calc(#{$border_size} + #{$border_dist});
+  padding-bottom: calc(#{$border_size} + #{$border_dist});
+  background: linear-gradient(
+    90deg,
+    rgba($brown, 0.25) 0%,
+    rgba($brown, 0.25) 50%,
+    $brown 50%,
+    $brown 100%
+  );
+  background-size: 200%;
+  label {
+    font-size: 1.5rem;
+    color: $brown;
+    padding: 8px 8px 7px;
+  }
+  transition: background 0.1s cubic-bezier(0.15, 0.79, 0, 1);
+}
+
+.nier-button-hover {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+
+  label {
+    color: $tan;
+  }
+  
+  background-position: -100%;
+
+  transition: background 1s cubic-bezier(0.15, 0.79, 0, 1);
+}
+
+.nier-button-hover-icon {
+  margin: 0;
+  margin-left: -14px;
+  margin-right: $button_dist_from_ruler;
+}
+.nier-button-hover-icon-visible {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+.nier-button-hover-icon-hidden {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
