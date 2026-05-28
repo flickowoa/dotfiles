@@ -1,11 +1,25 @@
+
 import { Box, Label, Button, DrawingArea } from "../widget.ts"
 import { interval, execAsync } from "astal"
-import AstalMpris from "gi://AstalMpris"
+import { mpris, runPlayerctl, playerctlNameFromBus } from "../lib/mpris.ts"
 import GdkPixbuf from "gi://GdkPixbuf"
 import Gdk from "gi://Gdk?version=3.0"
 import { dark } from "../env.ts"
 
-const mpris = AstalMpris.get_default()
+const currentPlayer = (): any => {
+    try {
+        const list = (mpris?.players ?? []) as any[]
+        if (!list.length) return null
+        const playing = list.find(p => p?.playback_status === "Playing")
+        if (playing) return playing
+        const paused = list.find(p => p?.playback_status === "Paused")
+        if (paused) return paused
+        return list[0]
+    } catch (e) {
+        try { print("mpris currentPlayer error:", e) } catch {}
+        return null
+    }
+}
 
 const FONT = `"FOT-Rodin Pro M","Noto Sans Mono",monospace`
 const TXT_DIM    = "rgba(200,184,154,0.55)"
@@ -126,20 +140,60 @@ export const HudPlayer = () => {
     `
     const prevBtn = Button({
         child: Label({ label: "⏮" }), css: btnCss,
-        onClicked: () => { try { mpris.players?.[0]?.previous() } catch (e) { print(e) } },
+        onClicked: async () => {
+            try {
+                const player = currentPlayer()
+                if (player) {
+                    try { player.previous() } catch (e) {
+                        try { print("mpris prev failed, falling back to playerctl:", e) } catch {}
+                        const pname = playerctlNameFromBus(player.bus_name ?? "")
+                        await runPlayerctl(["previous"], pname)
+                    }
+                } else {
+                    await runPlayerctl(["previous"])
+                }
+            } catch (e) { print(e) }
+        },
     })
     const playBtn = Button({
         child: Label({ label: "⏯" }), css: btnCss,
-        onClicked: () => { try { mpris.players?.[0]?.play_pause() } catch (e) { print(e) } },
+        onClicked: async () => {
+            try {
+                let player = currentPlayer()
+                if (player) {
+                    try { player.play_pause() } catch (e) {
+                        try { print("mpris play_pause failed, fallback to playerctl:", e) } catch {}
+                        const pname = playerctlNameFromBus(player.bus_name ?? "")
+                        await runPlayerctl(["play-pause"], pname)
+                        player = currentPlayer()
+                    }
+                } else {
+                    await runPlayerctl(["play-pause"])
+                }
+            } catch (e) { print(e) }
+        },
     })
     const nextBtn = Button({
         child: Label({ label: "⏭" }), css: btnCss,
-        onClicked: () => { try { mpris.players?.[0]?.next() } catch (e) { print(e) } },
+        onClicked: async () => {
+            try {
+                const player = currentPlayer()
+                if (player) {
+                    try { player.next() } catch (e) {
+                        try { print("mpris next failed, falling back to playerctl:", e) } catch {}
+                        const pname = playerctlNameFromBus(player.bus_name ?? "")
+                        await runPlayerctl(["next"], pname)
+                    }
+                } else {
+                    await runPlayerctl(["next"])
+                }
+            } catch (e) { print(e) }
+        },
     })
 
     let pendingCoverFetch = false
     const update = async () => {
-        const player = mpris.players?.[0]
+        const player = currentPlayer()
         if (!player) {
             titleLbl.label = "— NO MEDIA —"
             artistLbl.label = ""
@@ -161,7 +215,14 @@ export const HudPlayer = () => {
         }
         progress.queue_draw()
 
-        const url = (player.cover_art ?? "").trim()
+        let url = (player.cover_art ?? "").trim()
+        if (!url) {
+            try {
+                const pname = playerctlNameFromBus(player.bus_name ?? "")
+                const pc = await runPlayerctl(["metadata", "--format", "{{mpris:artUrl}}"], pname)
+                if (pc) url = pc.trim()
+            } catch (e) { try { print("playerctl art fetch failed:", e) } catch {} }
+        }
         if (url && url !== currentArtUrl && !pendingCoverFetch) {
             currentArtUrl = url
             pendingCoverFetch = true
@@ -176,7 +237,7 @@ export const HudPlayer = () => {
         }
     }
 
-    update()   // initial paint
+    update()  
     const t = interval(1000, update)
     mpris.connect("notify::players", () => update().catch(print))
 

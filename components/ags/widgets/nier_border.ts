@@ -50,7 +50,7 @@ export const NierBorder = ({
                     : assetsDir() + "/nier-border.svg"
                 if (child.icon !== want) child.icon = want
             })
-        } catch (_e) { /* ignore */ }
+        } catch (_e) { /* nothin */ }
     })
 
     scrollable.connect("destroy", () => t.cancel())

@@ -16,7 +16,6 @@ const GROUP_FONT = Math.max(18, Math.round(button_label_2 * 0.72))
 
 
 export const WifiGroup = ({
-    go_to = (_buttons: any[], _self: any) => {},
     passAssetsDir = assetsDir,
 }: {
     go_to?: (buttons: any[], self: any) => void

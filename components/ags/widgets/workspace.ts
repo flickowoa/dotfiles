@@ -9,10 +9,7 @@ import { RailTab } from "../nier/menu.ts"
 
 import AstalHyprland from "gi://AstalHyprland"
 const hyprland = AstalHyprland.get_default()
-
-
 const ICON_PX = 26
-
 const iconRGB = (isDark: boolean, selected: boolean): readonly [number, number, number] => {
     const fg: readonly [number, number, number] = isDark ? [234 / 255, 228 / 255, 210 / 255] : [72 / 255, 70 / 255, 61 / 255]
     const bg: readonly [number, number, number] = isDark ? [28 / 255, 26 / 255, 21 / 255]     : [194 / 255, 189 / 255, 166 / 255]
@@ -61,6 +58,7 @@ export const WorkspaceTiles = () => {
     const refreshTimer = interval(1500, refresh)
     refresh()
 
+    
     dark.subscribe(() => icon.queue_draw())
 
     tile.connect("unrealize", () => refreshTimer.cancel())

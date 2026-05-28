@@ -14,7 +14,6 @@ import { toggleBattery, isBatteryOpen } from "../windows/battery/battery.ts"
 import { drawWeatherIcon } from "./weather_icon.ts"
 import { RailTab } from "../nier/menu.ts"
 
-
 const TXT_DIM    = "rgba(72,70,61,0.70)"     // brown @ 70%
 const TXT_MID    = "rgba(72,70,61,0.95)"     // brown @ 95%
 const TXT_BRIGHT = "rgba(72,70,61,1.00)"     // full brown #48463d
@@ -62,7 +61,6 @@ const frameCss = (state: "idle" | "hover" | "active", isDark: boolean): string =
 const FRAME_CSS = FRAME_IDLE_L
 
 
-const pct3 = (n: number) => String(Math.round(n)).padStart(3, "0") + "%"
 const pct = (n: number) => String(Math.round(n)) + "%"
 const pad2 = (n: number) => String(n).padStart(2, "0")
 
@@ -122,7 +120,7 @@ const NierFrame = ({ heading, value, onSingle, onDouble, getActive, symbol }: {
 
 const drawPattern = (ctx: any, width: number, height: number, isDark: boolean) => {
     const [r, g, b] = isDark
-        ? [194/255, 189/255, 166/255]   // tan-ish for dark mode (light on dark)
+        ? [194/255, 189/255, 166/255]   
         : [77/255,  73/255,  62/255]    // #4D493E for light mode
 
     ctx.setSourceRGBA(r, g, b, 1)
@@ -244,7 +242,7 @@ export const HudBrightness = () => {
             val.label = String(Math.round(cur / maxB * 100)).padStart(3, "0") + "%"
         }
         update()
-        const t = interval(5_000, update)   // /sys read is cheap + the OSD shows live changes
+        const t = interval(5_000, update)   
         val.connect("destroy", () => t.cancel())
     }
     return NierFrame({ heading: "BRT", value: val, onSingle: () => toggleSlider("brt"), getActive: () => isSliderOpen() === "brt" })
