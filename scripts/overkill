@@ -3,8 +3,100 @@ DIR=$(cd "$(dirname "$0")" && pwd)
 
 case "${1:-enter}" in
   enter)
-    notify-send -p -u critical -t 0 "\"KILL MODE\"" "Click a window to obliterate it, ESC to cancel" > /tmp/kill-mode-notif-id
-    "$DIR/overkill.py" &
+    echo "KILL MODE ON"
+    notify-send -p -u critical -t 0 "KILL MODE ACTIVE" "Click a window to obliterate it, ESC to cancel" > /tmp/kill-mode-notif-id
+### creates the script in tmp
+    cat > /tmp/overkill.py << 'PYEOF'
+#!/usr/bin/env python3
+import gi, signal, math, cairo, subprocess
+gi.require_version('Gtk', '3.0')
+gi.require_version('Gdk', '3.0')
+gi.require_version('GtkLayerShell', '0.1')
+from gi.repository import Gtk, Gdk, GtkLayerShell, GLib
+
+class W(Gtk.Window):
+    def __init__(s):
+        super().__init__(type=Gtk.WindowType.TOPLEVEL)
+        s.set_title("overkill"); s.set_wmclass("overkill", "Overkill")
+        s.set_decorated(False); s.set_accept_focus(False)
+        s.set_app_paintable(True)
+        s.mx = 0; s.my = 0; s.angle = 0.0
+        screen = s.get_screen()
+        v = screen.get_rgba_visual()
+        if v: s.set_visual(v)
+        GtkLayerShell.init_for_window(s)
+        L = GtkLayerShell.Layer; E = GtkLayerShell.Edge
+        GtkLayerShell.set_layer(s, L.OVERLAY)
+        for e in (E.LEFT, E.RIGHT, E.TOP, E.BOTTOM): GtkLayerShell.set_anchor(s, e, 1)
+        GtkLayerShell.set_exclusive_zone(s, -1)
+        GtkLayerShell.set_keyboard_interactivity(s, 1)
+        s.connect("realize", s.on_realize)
+        s.connect("draw", s.on_draw)
+        s.show_all()
+    def on_realize(s, *a):
+        try:
+            out = subprocess.check_output(["hyprctl", "cursorpos"], text=True).strip()
+            x, y = out.split(", ")
+            s.mx, s.my = float(x), float(y)
+        except Exception:
+            pass
+        GLib.timeout_add(33, s.poll_mouse)
+        GLib.timeout_add(16, s.animate)
+    def poll_mouse(s):
+        try:
+            out = subprocess.check_output(["hyprctl", "cursorpos"], text=True).strip()
+            x, y = out.split(", ")
+            x, y = float(x), float(y)
+            if int(x) != int(s.mx) or int(y) != int(s.my):
+                s.mx, s.my = x, y
+        except Exception:
+            pass
+        return True
+    def animate(s):
+        s.angle += 0.015
+        if s.angle > math.pi * 2: s.angle -= math.pi * 2
+        s.queue_draw()
+        return True
+    def draw(s, cr, x, y):
+        cr.save()
+        cr.translate(x, y)
+        g = (0.76, 0.74, 0.65)
+        r, gap, arc, lw = 24, 10, 80, 1.8
+        arad = math.radians(arc)
+        grad = math.radians(gap)
+        cr.set_source_rgb(*g)
+        cr.set_line_width(lw)
+        cr.set_line_cap(cairo.LineCap.ROUND)
+        for i in range(4):
+            mid = s.angle + i * math.pi / 2
+            cr.arc(0, 0, r, mid + grad / 2, mid + grad / 2 + arad)
+            cr.stroke()
+        hs = 3
+        cr.set_source_rgba(0.62, 0, 0.02, 0.25)
+        cr.set_line_width(5)
+        cr.set_line_cap(cairo.LineCap.ROUND)
+        cr.move_to(-hs, -hs); cr.line_to(hs, hs)
+        cr.move_to(hs, -hs); cr.line_to(-hs, hs)
+        cr.stroke()
+        cr.set_source_rgb(0.62, 0, 0.02)
+        cr.set_line_width(1.5)
+        cr.move_to(-hs, -hs); cr.line_to(hs, hs)
+        cr.move_to(hs, -hs); cr.line_to(-hs, hs)
+        cr.stroke()
+        cr.restore()
+
+    def on_draw(s, w, cr):
+        cr.set_operator(cairo.OPERATOR_CLEAR)
+        cr.paint()
+        cr.set_operator(cairo.OPERATOR_OVER)
+        s.draw(cr, s.mx, s.my)
+        return True
+
+signal.signal(signal.SIGTERM, lambda *a: Gtk.main_quit())
+W()
+Gtk.main()
+PYEOF
+    python3 /tmp/overkill.py &
     echo $! > /tmp/kill-overlay-pid
     hyprctl dispatch submap kill
     ;;
@@ -20,6 +112,8 @@ case "${1:-enter}" in
     "$0" cleanup
     ;;
   exit|cleanup)
+    echo "KILL MODE OFF"
+    notify-send -u critical -t 1500 "KILL MODE INACTIVE" ""
     ID=$(cat /tmp/kill-mode-notif-id 2>/dev/null)
     [ -n "$ID" ] && busctl call --user org.freedesktop.Notifications /org/freedesktop/Notifications org.freedesktop.Notifications CloseNotification u "$ID" 2>/dev/null
     PID=$(cat /tmp/kill-overlay-pid 2>/dev/null)
