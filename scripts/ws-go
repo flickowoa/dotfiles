@@ -1,2 +1,2 @@
 #!/usr/bin/bash
-echo "ws-go $1" | socat - UNIX-CONNECT:/run/user/1000/astal/yorha.sock
+echo "ws-go $1" | socat - UNIX-CONNECT:$XDG_RUNTIME_DIR/astal/yorha.sock
