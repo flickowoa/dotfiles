@@ -1,3 +1,4 @@
+// wifi popup - nier styled network list + scanner modal
 import {
     Window, Box, Label, Scrollable, Astal,
     Anchor, Layer, Exclusivity, Keymode,
@@ -109,6 +110,7 @@ const scan = async () => {
     }
 }
 
+// re-skin the static chrome for the current theme
 const restyle = () => {
     const p = menuPalette()
     if (_panel) _panel.css = menuPanelCss()

@@ -1,3 +1,5 @@
+// Three-phase geometric triangle-grid theme transition
+// Port to AGS 3.0
 
 import { Window, DrawingArea, Overlay, Scrollable, Anchor, Layer, Exclusivity } from "../../widget.ts"
 import Gdk from "gi://Gdk?version=3.0"
@@ -196,6 +198,7 @@ const runAnimation = async () => {
             dist[i] = distFromCenter(cellGridX[i], cellGridY[i], centerX, centerY)
         }
 
+        // ── Phase 1 ──
         {
             const start = Date.now()
             const duration = 400
@@ -240,6 +243,7 @@ const runAnimation = async () => {
             }
         }
 
+        // ── Phase 2 ──
         {
             const start = Date.now()
             const duration = 400
@@ -288,6 +292,7 @@ const runAnimation = async () => {
         dark.set(!dark.get())
         await new Promise(r => setTimeout(r, 1500))
 
+        // ── Phase 3 ──
         {
             const start = Date.now()
             const duration = 5000

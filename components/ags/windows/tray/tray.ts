@@ -1,3 +1,8 @@
+//// traybar with open app notifications and properties tab 
+// kinda buggy.. properties alt menu might not be working properly across all apps, or not show all open apps actually..
+
+
+
 import {
     App, Window, Box, Label, Scrollable, Icon, CenterBox, EventBox, Astal,
     Anchor, Layer, Exclusivity, Keymode,
@@ -41,6 +46,9 @@ interface TrayItem {
 
 const trayItems = Variable<TrayItem[]>([])
 const themePaths = new Set<string>()
+// we host the StatusNotifierWatcher ourselves. nothing else provides one here
+// (waybar's off and ags 1.x's built-in tray service is gone), so without this the
+// tray was always empty. hostedRefs is the list of "busname/path" item refs.
 let watcherStarted = false
 let watcherConn: any = null
 let watcherOwnId: number | null = null
@@ -233,6 +241,10 @@ const refreshItems = () => {
     rebuildModal()
 }
 
+// ── StatusNotifierWatcher host ─────────────────────────────────────────────
+// we own org.kde.StatusNotifierWatcher and answer for the tray apps. apps like
+// spotify / nm-applet watch this name and re-register their items so should be updated and shown in traybar.
+
 const WATCHER_XML = `
 <node>
   <interface name="org.kde.StatusNotifierWatcher">
@@ -281,6 +293,7 @@ const addHostedRef = (ref: string) => {
     hostedRefs.push(ref)
     const { service } = parseItemRef(ref)
     if (service && !itemNameWatch.has(ref)) {
+        // Drop the item if its owner falls off the bus.
         const wid = Gio.bus_watch_name(
             Gio.BusType.SESSION,
             service,
@@ -296,6 +309,9 @@ const addHostedRef = (ref: string) => {
 }
 
 const WatcherImpl = {
+    // *Async form so we get the invocation -> the sender's bus name. the arg is
+    // either the full bus name or just an object path; if its a path the real
+    // owner is whoever sent the message.
     RegisterStatusNotifierItemAsync(params: any[], invocation: any) {
         try {
             const service = String(params?.[0] ?? "")
@@ -341,11 +357,14 @@ const ensureWatcher = () => {
                 catch (e) { print("tray watcher export:", e) }
             },
             () => {
+                // got the name, we're the watcher now. apps will re-register so
+                // refresh from our (empty) list.
                 watcherStarted = true
                 hostRegistered = true
                 refreshItems()
             },
             () => {
+                // couldnt grab it (something else owns it) - just stay empty
                 print("tray watcher: name unavailable")
             },
         )
@@ -499,6 +518,8 @@ const itemTokens = (item: TrayItem): Set<string> => {
     return set
 }
 
+// find the running hyprland window for a tray item and pull it to the current
+// workspace + focus it. resolves true if it found one.
 const focusItemWindow = (item: TrayItem): Promise<boolean> => {
     const tokens = itemTokens(item)
     if (tokens.size === 0) return Promise.resolve(false)
@@ -518,6 +539,7 @@ const focusItemWindow = (item: TrayItem): Promise<boolean> => {
         return execAsync(["hyprctl", "activeworkspace", "-j"]).then((wout: string) => {
             let ws = 0
             try { ws = JSON.parse(wout).id } catch {}
+            // silent move (no flicker) to the current ws, then focus it
             return execAsync(["hyprctl", "dispatch", "movetoworkspacesilent", `${ws},${sel}`])
                 .then(() => execAsync(["hyprctl", "dispatch", "focuswindow", sel]))
                 .then(() => true)
@@ -525,6 +547,8 @@ const focusItemWindow = (item: TrayItem): Promise<boolean> => {
         })
     }).catch(() => false)
 }
+
+// open app: if it already has a window, pull it to the current workspace + focus.
 
 const openOrActivateItem = (item: TrayItem) => {
     focusItemWindow(item).then(found => {
@@ -591,6 +615,7 @@ const activateItem = async (item: TrayItem, ev: any, anchor?: any) => {
         if (_win?.visible) _reveal?.close(() => { _win.visible = false })
         return
     } catch {}
+    // gtkmenu
     try { openPropsModal(item) } catch (e) { print(e) }
 }
 
@@ -605,6 +630,7 @@ const activateOrLaunchItem = async (item: TrayItem, ev: any, anchor?: any) => {
 
 const secondaryItem = async (item: TrayItem, ev: any, anchor?: any) => {
     const [x, y] = eventPos(ev)
+    // no gtk menu popup (it leaks the pointer grab, see above) - use the props modal
     try { openPropsModal(item); return } catch (e) { print(e) }
     try {
         await callMethod(item.proxy, "ContextMenu", new GLib.Variant("(ii)", [x, y]))
@@ -683,6 +709,8 @@ const rowFor = (item: TrayItem) => {
         content,
         hexpand: true,
         bodyPadding: "8px 14px",
+        // double clicks opens the app, 
+        // right opens the props/context modal
         onDouble: () => openOrActivateItem(item),
         onButton: (button: number, _ev: any) => {
             if (button === 3) { later(() => openPropsModal(item)); return true }
@@ -729,6 +757,8 @@ const btDeviceRow = (device: any) => {
         content,
         hexpand: true,
         bodyPadding: "8px 14px",
+        //  double clicks connects, right opens the pair/connect/
+        // disconnect/unpair menu (disconnect lives there)
         onDouble: () => connectDevice(device, () => rebuildBluetoothModal()),
         onButton: (button: number) => {
             if (button === 3) { later(() => openBluetoothActions(device)); return true }
@@ -799,6 +829,8 @@ const stopBtDiscovery = () => {
 
 let _btScanTimer: number | null = null
 const rescanBt = () => {
+    // show SCANNING right away (the discovering flag flips a beat later over dbus),
+    // refresh as devices show up, and stop after a bit.
     _btScanning = true
     startBtDiscovery()
     rebuildBluetoothModal()
@@ -821,6 +853,8 @@ const closeBluetoothDevices = () => {
 
 const openBluetoothDevices = () => {
     if (!_btWin) return
+    // grab the audio state up front so earbuds bluez wrongly calls disconnected
+    // still show CONNECTED right away
     refreshAudioMacs(() => { if (_btWin?.visible) rebuildBluetoothModal() })
     rebuildBluetoothModal()
     startBtDiscovery()
@@ -842,6 +876,10 @@ const restyle = () => {
     if (_btPanel) _btPanel.css = menuPanelCss()
 }
 
+// ── props / context-menu modal (centered, dimmed) ──────────────────────────
+// right-clicking a tray row opens this instead of a native popup: a dimmed
+// fullscreen overlay with a centered panel showing the app actions + the item's
+// dbus menuin same nier UI style (a bit buggy still)
 const mExist = (mi: any, k: string): boolean => { try { return !!mi.property_exist(k) } catch { return false } }
 const mStr = (mi: any, k: string): string => { try { return String(mi.property_get(k) ?? "") } catch { return "" } }
 const mFlag = (mi: any, k: string, dflt: boolean): boolean =>
@@ -887,6 +925,8 @@ const buildPropsRows = (item: TrayItem, mi: any): any[] => {
         const tType = mStr(c, "toggle-type")
         const checked = mInt(c, "toggle-state") === 1
         const rawLabel = mStr(c, "label").replace(/_/g, "") || "—"
+        // nm-applet's "Enable Wi-Fi" etc checkmark items read the same whether on
+        // or off, so show the verb the click will do (Enable/Disable) and skip the ◆/◇ since the word already says it.
         let prefix = tType ? (checked ? "◆ " : "◇ ") : ""
         let display = rawLabel
         if (tType && /^enable\s+/i.test(rawLabel)) {
@@ -978,8 +1018,11 @@ export const TrayPropsWindow = () => {
     _propsReveal = RevealBox(_propsPanel)
     dark.subscribe(() => { if (_propsPanel) _propsPanel.css = menuPanelCss(); if (_propsItem) rebuildPropsModal() })
 
+    // guard eventbox eats clicks on the panel so only backdrop clicks close it
     const guard = EventBox({ onButtonPressEvent: () => true })
     guard.add(_propsReveal.container)
+    // center both axes + size to content, else the CenterBox stretches it to full
+    // screen height
     try { guard.set_halign(3); guard.set_valign(3) } catch {}   // 3 = CENTER
 
     _propsWin = Window({
@@ -1227,6 +1270,7 @@ export const TrayBluetoothWindow = () => {
     })
 
     try { bluetooth.connect("notify::is-powered", rebuildBluetoothModal) } catch {}
+    // refresh the list as discovery finds / drops devices
     try { bluetooth.connect("device-added", () => { if (_btWin?.visible) rebuildBluetoothModal() }) } catch {}
     try { bluetooth.connect("device-removed", () => { if (_btWin?.visible) rebuildBluetoothModal() }) } catch {}
     return _btWin
@@ -1235,5 +1279,6 @@ export const TrayBluetoothWindow = () => {
 interval(5000, () => {
     ensureWatcher()
     queueRefresh()
+    // refresh the audio-aware connected state too, but only while the modal's open
     if (_btWin?.visible) refreshAudioMacs(() => rebuildBluetoothModal())
 })

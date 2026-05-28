@@ -1,3 +1,4 @@
+/// bluetooth module modal
 
 
 import {
@@ -41,16 +42,17 @@ export const setBluetoothPowered = (want: boolean) => {
     }
 }
 
-
 const audioMacs = new Set<string>()
 let _audioRefreshing = false
 export const refreshAudioMacs = (onChange?: () => void) => {
     if (_audioRefreshing) return
     _audioRefreshing = true
     const done = () => { _audioRefreshing = false }
+    // pactl list shortdumps everything, sinks + sources included
     execAsync(["pactl", "list", "short"])
         .then((out: string) => {
             const next = new Set<string>()
+            // node name uses underscores (bluez_output) or colons (bluez_input)
             const re = /bluez_(?:output|input)\.([0-9A-Fa-f]{2}(?:[_:][0-9A-Fa-f]{2}){5})/g
             let m: RegExpExecArray | null
             while ((m = re.exec(out)) !== null) next.add(m[1].replace(/_/g, ":").toUpperCase())
@@ -71,6 +73,8 @@ export const isDeviceConnected = (device: any): boolean => {
     } catch { return false }
 }
 
+// connect_device / disconnect_device are async (they have a _finish pair), so
+// calling them without a callback was kinda flaw. passin one so it actually fires anany bluez error shows up in the log instead of just doing nothing.
 export const connectDevice = (device: any, then?: () => void) => {
     const after = () => { refreshAudioMacs(() => {}); try { then?.() } catch (e) { print(e) } }
     try {
@@ -449,4 +453,6 @@ export const BluetoothActionWindow = () => {
     return _actWin
 }
 
+// keep the connected state fresh (bluez lies) by polling the pipewire nodes - but only
+// while the modals is popen
 interval(3000, () => { if (_win?.visible) refreshAudioMacs(() => rebuildList()) })

@@ -4,6 +4,8 @@ import { timeout } from "astal"
 import { arradd, arrremove, assetsDir } from "../../env.ts"
 import { NierButton, NierButtonGroup } from "../../nier/buttons.ts"
 
+// AstalNotifd — installed via paru -S libastal-notifd-git
+// had to port to work on ags 3.0
 import AstalNotifd from "gi://AstalNotifd"
 const notifd = AstalNotifd.get_default()
 
@@ -32,6 +34,7 @@ const forceSweep = (ids: Set<number>, attempt = 0) => {
     if (attempt < 2) timeout(180, () => forceSweep(ids, attempt + 1))
 }
 
+// Dismiss every currently-shown notification (bound to Alt+F11).
 export const dismissAllNotifications = () => {
     try {
         const list = currentNotifications()
@@ -167,6 +170,7 @@ const card = (notification: any, left: boolean = true) => {
         }),
         overlays: [hider],
         setup: (self: any) => timeout(100, () => {
+            // sound notif 
             import("../../widgets/sounds.ts").then(({ playNotif, playBleep }) => {
                 if (notification.urgency === 2) playBleep()
                 else                              playNotif()
@@ -181,12 +185,14 @@ const card = (notification: any, left: boolean = true) => {
                 })
             })
 
+            // Auto-dismiss after 10 s  
             timeout(10_000, () => {
                 if (!dismissed) {
                     try { notification.dismiss() } catch (e) { print("auto-dismiss:", e) }
                 }
             })
 
+            // Listen for dismiss
             notification.connect("resolved", () => {
                 if (dismissed) return
                 dismissed = true

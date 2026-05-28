@@ -1,12 +1,12 @@
-
 import { App, Window, EventBox, Box, Overlay, Scrollable, Anchor, Layer, Exclusivity } from "../../widget.ts"
 import Gtk from "gi://Gtk?version=3.0"
 import Gdk from "gi://Gdk?version=3.0"
 import { Variable, timeout } from "astal"
-import { SCREEN_WIDTH, SCREEN_HEIGHT, rand_int, get_cursor } from "../../env.ts"
+import { SCREEN_WIDTH, SCREEN_HEIGHT, rand_int, get_cursor, STYLE_CSS } from "../../env.ts"
 
 const { min, max, round, abs, sqrt, random } = Math
 
+// ── Helpers ───────────────────────────────────────────────────────────────
 const dist_from_center = (x: number, y: number, cx: number, cy: number) =>
     ((abs(x - cx) / 2) ** 2 + abs(y - cy) ** 2) ** 0.5
 
@@ -15,6 +15,7 @@ const pos_mapper = (x: number, y: number, sw: number, sh: number, cols: number, 
     (y / sh) * rows,
 ]
 
+// ── Triangle drawing ──────────────────────────────────────────────────────
 const draw_triangle = (
     ctx: any, cx: number, cy: number, w: number, h: number,
     color: number[], inverted: boolean,
@@ -62,17 +63,20 @@ const draw_triangle = (
     ctx.fill()
 }
 
+// ── Main window ───────────────────────────────────────────────────────────
 const cell_width = 200
 const cell_height = round(sqrt(cell_width ** 2 - (cell_width / 2) ** 2))
 const gap = 3
 const rows = round(SCREEN_HEIGHT / cell_height) + 1
 const cols = round(SCREEN_WIDTH * 2 / cell_width) + 1
 
+// Each cell: [c_opacity, t_opacity, c_left, t_left, c_right, t_right, c_y, t_y, inited, s_override]
 type Cell = [number, number, number, number, number, number, number, number, boolean, boolean]
 const cells: Cell[] = Array.from({ length: rows * cols }, () =>
     [0, 0, 0, 0, 0, 0, 0, 0, false, false] as Cell
 )
 
+// Colors (dark mode aware — standalone geom always starts with current state)
 const colors = [87 / 255, 84 / 255, 74 / 255]  // light mode triangles
 
 let wait_for_draw = false
@@ -151,7 +155,7 @@ const update_selection = async (self: any) => {
 
 App.start({
     instanceName: "geom",
-    css: "$yorha/components/ags/style/style.css",
+    css: STYLE_CSS,
     main() {
         Window({
             name: "geom",
@@ -223,6 +227,7 @@ App.start({
                                 await new Promise(r => setTimeout(r, max(0, 1000 / fps - (draw_t - frame_start))))
                             }
                         }
+                        // ctrl swaps the anchors
                         if (event.get_keyval()[1] === 65507) {
                             const [tx1, ty1] = [anchor_x1.get(), anchor_y1.get()]
                             anchor_x1.set(anchor_x2.get()); anchor_y1.set(anchor_y2.get())
@@ -275,6 +280,7 @@ App.start({
             }),
         })
 
+        // Animate in
         ;(async () => {
             try {
                 const [real_x, real_y] = await get_cursor()

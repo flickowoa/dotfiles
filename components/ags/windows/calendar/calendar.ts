@@ -1,3 +1,5 @@
+// calendar popup - nier styled month grid. opens from the clock frame, prev/next
+
 import { Window, Box, Label, Anchor, Layer, Exclusivity, Keymode, Astal } from "../../widget.ts"
 import Gdk from "gi://Gdk?version=3.0"
 import { dark } from "../../env.ts"
