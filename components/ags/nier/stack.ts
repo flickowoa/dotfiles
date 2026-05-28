@@ -72,6 +72,7 @@ export const modalClose = (name: string) => {
     recalc()
 }
 
+
 export const addDragDismiss = (
     win: any,
     onClose: () => void,
