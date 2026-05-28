@@ -28,15 +28,12 @@ stuff i changed or added on top of the original:
   the `windowrule` v3 format, and dropped the removed `ignorealpha` rules.
 - rebuilt the bar + widgets on **ags 3.x** (astal + typescript), the old ags 1.x
   api doesnt exist anymore. lives under `components/ags3/`.
-- reshaped the **status bar** a little to my taste - boxed frames with the
+- reshaped the **status bar** to my own usage, w boxed frames with the
   detached top/bottom rails, hand-drawn workspace icons, slightly bigger fonts.
-- redid the **workspace switch animation** - a nier-ish triangle wipe that blooms
+- redid the **workspace switch animation** - a different tile animation e that blooms
   out from the middle then dissolves (`components/ags3/windows/ws_anim`).
 - added an **EXTRAS/** folder with matching YoRHa css themes for whatsapp web and
-  discord, for anyone who wants the whole set.
-
-a lot of this is opinionated to my own setup so feel free to take only the bits
-you want.
+  discord, and later ill add some others
 
 
 ## 📥 Installation
