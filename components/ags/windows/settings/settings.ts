@@ -147,6 +147,7 @@ const sidebarItem = (label: string, active: () => boolean, onClick: (self: any) 
 }
 
 
+// ── Selection state helpers ───────────────────────────────────────────────
 const ensure_only_selected = (button: any, page_button: any) => {
     if (button === page_button) return button
     const box = button?.child
@@ -184,6 +185,7 @@ const bgHide = () => {
     if (bg) bg.visible = false
 }
 
+// ── Settings pane ─────────────────────────────────────────────────────────
 const NierSettingPane = () => {
     let current_page = 0
     let CLICK_TIMEOUT = false
@@ -197,6 +199,7 @@ const NierSettingPane = () => {
     let _opening = false
     let _openSeq = 0
 
+    // Page containers are built lazily in setup
     let panes: any[] = []
 
     const containerBox = Box({
@@ -208,6 +211,7 @@ const NierSettingPane = () => {
         css: `min-height:${SETTINGS_PANEL_H}px;`,
 
         setup: (self: any) => timeout(1, () => {
+            // Update background on dark mode change
             dark.subscribe(() => {
                 self.css = `min-height:${SETTINGS_PANEL_H}px;`
             })
@@ -274,6 +278,9 @@ const NierSettingPane = () => {
                 containerClassName: "nier-settings-1-container",
                 className: "nier-settings-1",
                 setup: (self: any) => {
+                    // set the panel background right away (not just on theme
+                    // toggle). the scss pointed at wallpapers/nier.png which isnt
+                    // there, so without this the panel had no bg.
                     const setBg = () => {
                         self.css = ROOT_PAGE_CSS +
                             `background:url("${dark.get() ? YORHA_DIR + '/wallpapers/nier_dark.png' : YORHA_DIR + '/wallpapers/nier_light.png'}") no-repeat;` +
@@ -322,6 +329,7 @@ const NierSettingPane = () => {
             )
         }),
 
+        // Visibility tracking for window-toggled
         connections: [] as any,
     })
 

@@ -6,6 +6,7 @@ import { NierDropDownButton } from "../nier/dropdown.ts"
 import { button_label_2, settings_title_bottom, settings_title_top } from "../scaling.ts"
 import { toggleWifi } from "../windows/wifi/wifi.ts"
 
+// AstalNetwork — installed via paru -S libastal-network-git
 import AstalNetwork from "gi://AstalNetwork"
 const network = AstalNetwork.get_default()
 
@@ -16,6 +17,7 @@ const GROUP_FONT = Math.max(18, Math.round(button_label_2 * 0.72))
 
 
 export const WifiGroup = ({
+   // go_to = (_buttons: any[], _self: any) => {},
     passAssetsDir = assetsDir,
 }: {
     go_to?: (buttons: any[], self: any) => void
@@ -27,6 +29,7 @@ export const WifiGroup = ({
     const current_ssid = new Variable<string>(wifi?.ssid ?? "")
     const current_networks = new Variable<string[]>(["loading..."])
 
+    // Sync enabled toggle → wifi
     const unsub_enabled = enabled.subscribe((v) => {
         if (wifi) wifi.enabled = (v === "Yes")
     })
@@ -40,6 +43,7 @@ export const WifiGroup = ({
         popup_x_offset: SCREEN_WIDTH / 4,
     })
 
+    // Scan networks every 10s
     const scan_timer = interval(10000, () => {
         if (!wifi) return
         current_ssid.set(wifi.ssid ?? "")
@@ -82,6 +86,7 @@ export const WifiGroup = ({
         handleClick: async () => { toggleWifi() },
     })
 
+    // Cleanup on destroy
     connectDropdown.connect("destroy", () => {
         unsub_enabled()
         scan_timer.cancel()

@@ -165,6 +165,7 @@ const animateAlive = async () => {
         for (let i = 0; i < N; i++) {
             if (selected[i] || selFade[i] < 0.1) continue
             if (leftV[i] > 0.8 && rightV[i] > 0.8 && yV[i] > 0.8) {
+                // subtle random perturbation for "alive" feel
                 tLeft[i] = 0.85 + Math.random() * 0.15
                 tRight[i] = 0.85 + Math.random() * 0.15
                 tY[i] = 0.85 + Math.random() * 0.15

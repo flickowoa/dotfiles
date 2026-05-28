@@ -5,6 +5,7 @@ import { NierButton } from "../nier/buttons.ts"
 import { NierSliderButton } from "../nier/slider.ts"
 import { button_label_2, button_slider_width, settings_title_bottom, settings_title_top } from "../scaling.ts"
 
+// AstalWp — installed via paru -S libastal-wireplumber-git
 import AstalWp from "gi://AstalWp"
 const audio = AstalWp.Wp.get_default().audio
 
@@ -32,6 +33,7 @@ const volume_slider = ({
         ratio: volume_ratio,
     })
 
+    // Sync ratio → endpoint volume
     const unsub = volume_ratio.subscribe((v) => {
         if (endpoint) {
             const current = endpoint.volume ?? 0
@@ -46,6 +48,7 @@ const volume_slider = ({
         }
     })
 
+    // Sync endpoint → ratio (on external changes)
     if (endpoint) {
         endpoint.connect("notify::volume", () => {
             volume_ratio.set(endpoint.volume ?? 0)

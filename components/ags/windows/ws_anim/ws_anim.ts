@@ -11,6 +11,7 @@ const rows = round(SCREEN_HEIGHT / cell_h) + 2
 const cols = round(SCREEN_WIDTH * 2 / cell_w) + 2
 const N = rows * cols
 
+// ── Pre-computed cell grid ──
 const cellX = new Float32Array(N)
 const cellY = new Float32Array(N)
 const cellPx = new Float32Array(N)

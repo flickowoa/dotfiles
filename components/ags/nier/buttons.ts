@@ -9,6 +9,7 @@ import {
 } from "../scaling.ts"
 
 
+// ── NierButton ────────────────────────────────────────────────────────────
 export interface NierButtonProps {
     label?: string
     className?: string
@@ -169,6 +170,7 @@ export const NierButton = ({
         }),
     })
 
+// ── NierButtonGroup ───────────────────────────────────────────────────────
 export interface NierButtonGroupProps {
     heading?: string
     scrollable?: boolean
@@ -236,6 +238,7 @@ export const NierButtonGroup = ({
     return inner
 }
 
+// ── NierLongButton ────────────────────────────────────────────────────────
 export interface NierLongButtonProps {
     name?: string
     className?: string

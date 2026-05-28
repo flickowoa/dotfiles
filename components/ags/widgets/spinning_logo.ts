@@ -1,3 +1,4 @@
+// settings button 
 import { Button, DrawingArea } from "../widget.ts"
 import GdkPixbuf from "gi://GdkPixbuf"
 import Gdk from "gi://Gdk?version=3.0"
@@ -33,12 +34,14 @@ export const SpinningLogo = ({
                 ctx.scale(size / pixbuf.get_width(), size / pixbuf.get_height())
                 Gdk.cairo_set_source_pixbuf(ctx, pixbuf, 0, 0)
                 ctx.paint()
+                // second pass: tint a bit brighter over just the icon. cairo keeps the pixbuf alpha so transparent pixels stay clear (no square halo).
                 if (glow > 0.01) {
                     try { ctx.paintWithAlpha(0.6 * glow) } catch {}
                 }
                 ctx.restore()
             } catch {}
         } else {
+            // Fallback triangle so the button is never invisible
             ctx.setSourceRGBA(218/255, 212/255, 187/255, 0.85 + 0.15 * glow)
             ctx.moveTo(size / 2, 0)
             ctx.lineTo(size, size)
@@ -68,6 +71,7 @@ export const SpinningLogo = ({
         timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 16, tick)
     }
 
+    // red fill, brighter + heavier rails on hover
     const btnCss = (hover: boolean) => `
         padding: 0 8px;
         margin: 0;

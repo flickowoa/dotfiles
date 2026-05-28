@@ -1,3 +1,4 @@
+// now playing - album art as a pixel matrix + a little cava visualiser
 import { App, Box, Label, Button, EventBox, Revealer } from "../../widget.ts"
 import Gtk from "gi://Gtk?version=3.0"
 import GdkPixbuf from "gi://GdkPixbuf"
@@ -7,6 +8,8 @@ import { arradd, arrremove, dark, assetsDir, rand_int, AGS_DIR } from "../../env
 
 import { mpris } from "../../lib/mpris.ts"
 
+// pick the most relevant player: playing > paused > first. stops the ui sticking
+// on some old youtube tab when spotify is the one actually playing.
 const currentPlayer = (): any => {
     try {
         const list = (mpris?.players ?? []) as any[]
@@ -17,6 +20,7 @@ const currentPlayer = (): any => {
         if (paused) return paused
         return list[0]
     } catch (e) {
+        // mpris can be missing if the binding isn't available; keep caller safe.
         try { print("mpris currentPlayer error:", e) } catch {}
         return null
     }
@@ -32,15 +36,22 @@ const runPlayerctl = async (args: string[], pname?: string) => {
     }
 }
 
+// cover-art loader that works around astalmpris's https cache always failing on
+// spotify's i.scdn.co urls. grab the raw artUrl from playerctl, curl it down,
+// return the local path.
 const COVER_TMP = "/tmp/yorha_cover.png"
 let _coverDownloadInflight = false
 
+// "org.mpris.MediaPlayer2.spotify" -> "spotify"
 const playerctlNameFromBus = (busName: string): string => {
     if (!busName) return ""
     const prefix = "org.mpris.MediaPlayer2."
     return busName.startsWith(prefix) ? busName.slice(prefix.length) : busName
 }
 
+// turn a url (https / file:// / local) into a usable local path. https gets
+// curl'd to /tmp since astalmpris's cache cant. caller passes the url it already
+// pulled from playerctl so we dont call it twice.
 const resolveCoverPath = async (url: string): Promise<string | null> => {
     if (!url) return null
     if (_coverDownloadInflight) return null
@@ -62,6 +73,7 @@ const resolveCoverPath = async (url: string): Promise<string | null> => {
 
 const { round } = Math
 
+// Bad Apple!! easter egg titles
 const apple_names = [
     "【東方】Bad Apple!! ＰＶ【影絵】",
     "Bad Apple!! - Full Version w/video [Lyrics in Romaji, Translation in English]",
@@ -86,6 +98,10 @@ const colors = () => dark.get()
     ? [218 / 255, 212 / 255, 187 / 255]
     : [87 / 255, 84 / 255, 74 / 255]
 
+// ── Cava subprocess ───────────────────────────────────────────────────────
+// only run cava while the player is actually open. it parks at ~9% cpu the whole
+// time it runs and you cant see the visualiser when the players closed, so theres
+// no point feeding it audio 24/7. started/stopped from player.ts on visibility.
 const cava = new Variable<number[]>([])
 let _cavaProc: any = null
 export const cavaStart = () => {
@@ -101,6 +117,7 @@ export const cavaStop = () => {
     cava.set([])
 }
 
+// ── Image → darkness matrix ───────────────────────────────────────────────
 const image_to_matrix = async (inputPath: string, imagedat: Variable<any[]>, rows: number): Promise<[number, number]> => {
     const pixbuf = GdkPixbuf.Pixbuf.new_from_file(inputPath)
     if (!pixbuf) return [0, 1]
@@ -134,6 +151,7 @@ const image_to_matrix = async (inputPath: string, imagedat: Variable<any[]>, row
     return [minV, maxV]
 }
 
+// ── Cava visualizer ───────────────────────────────────────────────────────
 const cava_vis = () => {
     let bar1_pos = 1, bar2_pos = 1
     let last_cava_update = 0
@@ -167,6 +185,7 @@ const cava_vis = () => {
     return vis
 }
 
+// ── NowPlaying ────────────────────────────────────────────────────────────
 export const NowPlaying = () => {
     const rows = 64
     const cell_width = 10, cell_height = 10
@@ -198,6 +217,8 @@ export const NowPlaying = () => {
     }
 
     type ShowCell = [number, number, number, number, number, number]  // r,g,b, current_opacity, opacity, offset
+    // cells start fully transparent (opacity 0) so the "darkness != opacity" check
+    // fires for every cell with any darkness - otherwise bright pixels never update.
     const showingdat = new Variable<ShowCell[]>(
         Array.from({ length: rows * rows }, () => [0, 0, 0, 0, 0, 0] as ShowCell)
     )
@@ -220,6 +241,7 @@ export const NowPlaying = () => {
 
     const drawingArea = new Gtk.DrawingArea()
 
+    // Ripple effect on play/pause
     const ripple_from = async (cell_x: number, cell_y: number) => {
         const max_thick = 10
         const max_dist = (Math.max(cell_x, rows - cell_x) ** 2 + Math.max(cell_y, rows - cell_y) ** 2) ** 0.5 + max_thick
@@ -243,6 +265,7 @@ export const NowPlaying = () => {
         }
     }
 
+    // player controls - prev | play/pause | next, evenly spaced
     const controls = Box({
         homogeneous: true,                        // all three buttons same width
         spacing: 0,
@@ -309,11 +332,14 @@ export const NowPlaying = () => {
                                 try { print("mpris play_pause failed, fallback to playerctl:", e) } catch {}
                                 const pname = playerctlNameFromBus(player.bus_name ?? "")
                                 await runPlayerctl(["play-pause"], pname)
+                                // refresh player object after external toggle
                                 player = currentPlayer()
                             }
                         } else {
                             await runPlayerctl(["play-pause"])
                         }
+                        // self.child can be undefined depending on how astal wraps
+                        // the button, so guard before touching .label
                         const lbl = self?.child
                         if (lbl && "label" in lbl) {
                             lbl.label = player?.playback_status === "Playing" ? "⏸︎" : "▶︎"
@@ -350,6 +376,7 @@ export const NowPlaying = () => {
         ],
     })
 
+    // Drawing area setup
     const matrixBox = Box({
         className: "image-matrix-container",
         hpack: "center",
@@ -357,11 +384,16 @@ export const NowPlaying = () => {
         children: [drawingArea],
     })
 
+    // without this size request the widget gets allocated 0x0 (even with the css
+    // min-height/width on the parent) and a 0x0 widget never gets a draw signal -
+    // which is why the cover stayed dark even after writing all the cells.
     drawingArea.set_size_request(rows * cell_width, rows * cell_height)
     drawingArea.set_app_paintable?.(true)
     try { drawingArea.show() } catch {}
     try { drawingArea.set_visible?.(true) } catch {}
 
+    // connect the draw handler right away (not in a timeout) so we dont miss the
+    // first draw after the widget realizes
     {
         drawingArea.connect("draw", (_widget: any, context: any) => {
             const dat = showingdat.get()
@@ -413,12 +445,15 @@ export const NowPlaying = () => {
         })
     }
 
+    // set hexpand/hpack in a tiny timeout so the parent lays out first
     timeout(1, () => {
         drawingArea.hexpand = true
         drawingArea.hpack = "end"
+        // kick an initial draw once we're past parent layout
         drawingArea.queue_draw()
     })
 
+    // hover - reveal pixels under the mouse
     const eventBox = EventBox({
         setup: (self: any) => timeout(1, () => {
             self.connect("motion-notify-event", (_widget: any, event: any) => {
@@ -441,10 +476,15 @@ export const NowPlaying = () => {
         child: matrixBox,
     })
 
+    // cover art update loop. when imagedat changes, copy the pixels straight into
+    // showingdat already at full opacity. the draw signal handles the colour drift
+    // to the beige + the opacity easing, so the old 5s interpolation loop is gone
+    // (it was buggy, bright pixels never reached their final state).
     const cover_unsub = imagedat.subscribe(() => timeout(1, async () => {
         try {
             if (preparing_cover) return
             if (badappling) {
+                // Bad-Apple keeps the legacy fast path
                 const imgd = imagedat.get()
                 const dat: ShowCell[] = []
                 for (let i = 0; i < rows * rows; i++) {
@@ -465,7 +505,10 @@ export const NowPlaying = () => {
                 const entry = imgd[i]
                 if (!entry) continue
                 const [r2, g2, b2, rawDarkness] = entry
+                // clamp out any NaN so cairo never gets one
                 const darkness = Math.max(0, Math.min(1, Number(rawDarkness) || 0))
+                // snap both opacities to the target so cells show at the right
+                // alpha right away; the draw signal blends the colour to beige.
                 dat[i] = [r2, g2, b2, darkness, darkness, 0]
             }
             showingdat.set(dat)
@@ -473,10 +516,14 @@ export const NowPlaying = () => {
         } catch (e) { print(e) }
     }))
 
+    // MPRIS track/cover changes
     const coverPlayerBucket = makeSigBucket()
     const coverHandle = () => timeout(10, async () => {
             const player = currentPlayer()
             if (!player || preparing_cover) return
+            // cache key off title+art so we retry the download on track change
+            // even when astalmpris's cover_art is stuck empty. also ask playerctl
+            // directly for the raw artUrl since cover_art isnt reliable.
             let liveUrl = ""
             try {
                 const pname = playerctlNameFromBus(player.bus_name ?? "")
@@ -489,6 +536,7 @@ export const NowPlaying = () => {
             if (current_cover_info === cacheKey) return
             current_cover_info = cacheKey
 
+            // Bad Apple!! easter egg
             if (apple_names.includes(player.title ?? "")) {
                 if (apples > 1 || badappling) return
                 apples++
@@ -510,8 +558,11 @@ export const NowPlaying = () => {
                 badappling = false; wait_for_apples = false
             }
 
+            // normal cover - resolve the url to a local path (curl for https since
+            // astalmpris's cache cant handle spotify's urls)
             try {
                 preparing_cover = true
+                // prefer the live playerctl url, fall back to cover_art if usable
                 const url = liveUrl || player.cover_art || ""
                 const localPath = await resolveCoverPath(url)
                 if (!localPath) { preparing_cover = false; return }
@@ -542,6 +593,7 @@ export const NowPlaying = () => {
     bindCoverPlayers()
     coverHandle()
 
+    // theme change -> reload the cover
     const dark_unsub = dark.subscribe(() => timeout(500, async () => {
         preparing_cover = true
         await image_to_matrix("/tmp/bg.png", imagedat, rows).catch(e => { preparing_cover = false; print(e) })
@@ -549,6 +601,7 @@ export const NowPlaying = () => {
         imagedat.set(imagedat.get())
     }))
 
+    // track title revealer
     const title_label = Label({
         label: "",
         className: "heading",
@@ -609,12 +662,17 @@ export const NowPlaying = () => {
         bindInfoPlayers()
         handleChange().catch(print)
 
+        // polling fallback - astalmpris misses some player swaps (youtube paused,
+        // spotify started, no notify fires till the youtube tab dies). poll every
+        // 1.5s as a safety net.
         let lastPlayerBus = ""
         let lastTitle = ""
         const infoPoll = interval(1500, () => {
             const p = currentPlayer()
             const bus = p?.bus_name ?? ""
             const ttl = p?.title ?? ""
+            // reset the caches when the player or title actually changed, else the
+            // handlers see "no change" and skip
             if (bus !== lastPlayerBus || ttl !== lastTitle) {
                 lastPlayerBus = bus
                 lastTitle = ttl

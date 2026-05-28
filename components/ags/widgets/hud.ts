@@ -1,3 +1,5 @@
+// the top/bottom bar widgets. reshaped these from the original a bit - boxed
+// frames with the detached top/bottom rails, uppercase headings, the nier look.
 import { Box, Label, DrawingArea, EventBox } from "../widget.ts"
 import { execAsync, interval, timeout } from "astal"
 import Gio from "gi://Gio"
@@ -20,16 +22,21 @@ const TXT_BRIGHT = "rgba(72,70,61,1.00)"     // full brown #48463d
 
 const FONT = `"FOT-Rodin Pro M","Noto Sans Mono",monospace`
 
+// bumped the fonts a touch bigger/bolder than stock. no colours here on purpose -
+// they inherit the frame's `color:` so one label works across light/dark + states
 const lblHeading = `font-family:${FONT};font-size:14px;letter-spacing:3px;font-weight:600;`
 const lblValue   = `font-family:${FONT};font-size:16px;letter-spacing:1px;font-weight:600;`
 const lblTime    = `font-family:${FONT};font-size:18px;letter-spacing:4px;font-weight:700;`
 const lblTitle   = `font-family:${FONT};font-size:16px;letter-spacing:2px;font-weight:600;`
 
+// brown #48463d -> rgba(72,70,61), tan #c2bda6 -> rgba(194,189,166), + dark pair
 const BROWN     = "72,70,61"
 const TAN       = "194,189,166"
 const DARK_BG   = "28,26,21"     // dark-mode background base
 const CREAM     = "234,228,210"  // dark-mode foreground
 
+// frame css per state. idle = faint fill, no border. hover = stronger fill + the
+// detached top/bottom rails. active = full fill with inverted text.
 const mkFrameCss = (
     bg: string, fg: string, borderColor: string,
 ) => `
@@ -44,10 +51,12 @@ const mkFrameCss = (
     color: ${fg};
 `
 
+// light-mode states
 const FRAME_IDLE_L   = mkFrameCss(`rgba(${BROWN},0.20)`, `rgba(${BROWN},1)`, "transparent")
 const FRAME_HOVER_L  = mkFrameCss(`rgba(${BROWN},0.32)`, `rgba(${BROWN},1)`, `rgba(${BROWN},1)`)
 const FRAME_ACTIVE_L = mkFrameCss(`rgba(${BROWN},1)`,    `rgba(${TAN},1)`,   `rgba(${BROWN},1)`)
 
+// dark-mode states (inverted)
 const FRAME_IDLE_D   = mkFrameCss(`rgba(${CREAM},0.18)`, `rgba(${CREAM},1)`, "transparent")
 const FRAME_HOVER_D  = mkFrameCss(`rgba(${CREAM},0.30)`, `rgba(${CREAM},1)`, `rgba(${CREAM},1)`)
 const FRAME_ACTIVE_D = mkFrameCss(`rgba(${CREAM},1)`,    `rgba(${DARK_BG},1)`, `rgba(${CREAM},1)`)
@@ -58,9 +67,12 @@ const frameCss = (state: "idle" | "hover" | "active", isDark: boolean): string =
     return isDark ? FRAME_IDLE_D : FRAME_IDLE_L
 }
 
+// just the idle css, used by HudIdentifier
 const FRAME_CSS = FRAME_IDLE_L
 
+// ── helpers ──────────────────────────────────────────────────────────────────
 
+// const pct3 = (n: number) => String(Math.round(n)).padStart(3, "0") + "%"
 const pct = (n: number) => String(Math.round(n)) + "%"
 const pad2 = (n: number) => String(n).padStart(2, "0")
 
@@ -72,6 +84,7 @@ const readFile = (path: string): string => {
     } catch { return "" }
 }
 
+// cpu usage
 let _prevIdle = 0, _prevTotal = 0
 const cpuPercent = (): number => {
     const line = readFile("/proc/stat").split("\n")[0]
@@ -95,6 +108,9 @@ const ramPercent = (): number => {
     return total ? (1 - avail / total) * 100 : 0
 }
 
+// ── NierFrame — the little box around each hud item ─────────────────────────
+// three states (idle/hover/active), follows the theme toggle. optional click
+// handlers + a getActive() poll (so the CPU/MEM etc box lights up while its graphpopup is open).
 const NierFrame = ({ heading, value, onSingle, onDouble, getActive, symbol }: {
     heading: string
     value: any
@@ -103,6 +119,8 @@ const NierFrame = ({ heading, value, onSingle, onDouble, getActive, symbol }: {
     getActive?: () => boolean
     symbol?: string
 }) => {
+    // the leading square is a real box from RailTab (square:true) so it lines up
+    // with the text. no explicit colour on the labels so they flip with the state.
     const headingLbl = Label({ label: heading, css: lblHeading, vpack: "center" })
     const content = Box({
         spacing: 8,
@@ -118,19 +136,26 @@ const NierFrame = ({ heading, value, onSingle, onDouble, getActive, symbol }: {
     return box
 }
 
+// ── HudPatternBar — redrew the nier "pattern" divider in cairo ──────────────
+//   - a 2px full-width line at the top
+//   - 10px bars every 50px just under it
+//   - two rows of fine tick clusters with an alpha ramp
 const drawPattern = (ctx: any, width: number, height: number, isDark: boolean) => {
     const [r, g, b] = isDark
         ? [194/255, 189/255, 166/255]   
         : [77/255,  73/255,  62/255]    // #4D493E for light mode
 
+    // 1. solid 2px line across the top
     ctx.setSourceRGBA(r, g, b, 1)
     ctx.rectangle(0, 0, width, 2)
     ctx.fill()
 
+    // 2. little 10x3 bars every 50px, just under the line
     ctx.setSourceRGBA(r, g, b, 1)
     for (let x = 0; x < width; x += 50) ctx.rectangle(x, 4, 10, 3)
     ctx.fill()
 
+    // one cluster of tick marks - two 4px dash groups per 50px, with an alpha ramp
     const dashAlpha = [0.4, 0.8, 0.9, 0.4]
     const cluster = (xOff: number, baseY: number, h: number) => {
         for (let x = xOff; x < width; x += 50) {
@@ -144,12 +169,14 @@ const drawPattern = (ctx: any, width: number, height: number, isDark: boolean) =
         }
     }
 
+    // upper + lower tick clusters
     cluster(22, 10, 4)
     cluster(28, 18, 4)
 }
 
 export const HudPatternBar = ({ height = 26 }: { height?: number } = {}) => {
     const area = DrawingArea({ hexpand: true })
+    // need an explicit size or the drawingarea gets 0 height and never draws
     area.set_size_request(-1, height)
     area.connect("draw", (_w: any, ctx: any) => {
         const alloc = area.get_allocation()
@@ -157,10 +184,12 @@ export const HudPatternBar = ({ height = 26 }: { height?: number } = {}) => {
         return false
     })
     dark.subscribe(() => area.queue_draw())
+    // kick a draw
     timeout(50, () => area.queue_draw())
     return area
 }
 
+// ── top-bar widgets ─────────────────────────────────────────────────────────
 
 export const HudClock = () => {
     const lbl = Label({ css: lblTime, label: "00:00:00" })
@@ -171,11 +200,13 @@ export const HudClock = () => {
     update()
     const t = interval(1000, update)
     lbl.connect("destroy", () => t.cancel())
+    // NierFrame so it gets the same hover/dark styling as the rest
     return NierFrame({ heading: "", symbol: "■", value: lbl,
         onSingle: () => toggleCalendar(),
         getActive: () => isCalendarOpen() })
 }
 
+// ── utility frames — battery, brightness, temp, uptime, volume  and others ──────────────
 
 const findFirst = (paths: string[]): string | null => {
     for (const p of paths) {
@@ -285,6 +316,7 @@ export const HudVolume = () => {
     return NierFrame({ heading: "VOL", value: val, onSingle: () => toggleSlider("vol"), getActive: () => isSliderOpen() === "vol" })
 }
 
+// ── bottom-bar widgets ──────────────────────────────────────────────────────
 
 export const HudIdentifier = () => Box({
     spacing: 10,
@@ -339,6 +371,7 @@ export const HudStats = () => {
     updateDisk()
     const diskTimer = interval(30_000, updateDisk)
 
+    // weather icon - recoloured per state (fg idle, inverted bg when selected)
     let wxCond = ""
     let wxSelected = false
     const wxIconRGB = (isDark: boolean): readonly [number, number, number] => {
@@ -388,6 +421,7 @@ export const HudStats = () => {
     updateWifi()
     const wfTimer = interval(20000, updateWifi)   // ssid rarely changes, no need every 5s
 
+    // launch a kitty running `cmd`
     const inKitty = (cmd: string) =>
         execAsync(["kitty", "-e", "sh", "-c", cmd]).catch(print)
 
@@ -416,6 +450,7 @@ export const HudStats = () => {
             onSingle: () => toggleDisk(),
             getActive: () => isDiskOpen(),
         }),
+        // weather uses an icon in place of the leading square + heading, to show the forecast of the day.
         RailTab({
             content: Box({ spacing: 9, vpack: "center", children: [wxIcon, wxVal] }),
             onSingle: () => toggleWeather(),

@@ -1,3 +1,5 @@
+// little graph popup - a cairo line graph of cpu/mem history, opens when you
+// click a stat frame on the bar
 import { Window, Box, Label, DrawingArea, Anchor, Layer, Exclusivity } from "../../widget.ts"
 import GLib from "gi://GLib"
 import Gio from "gi://Gio"
@@ -57,15 +59,18 @@ const drawGraph = (ctx: any, width: number, height: number, history: number[]) =
         ? [218/255, 212/255, 187/255]
         : [87/255,  84/255,  74/255]
 
+    // Background panel
     ctx.setSourceRGBA(14/255, 12/255, 9/255, 0.92)
     ctx.rectangle(0, 0, width, height)
     ctx.fill()
 
+    // Border
     ctx.setSourceRGBA(r, g, b, 0.30)
     ctx.setLineWidth(1)
     ctx.rectangle(0.5, 0.5, width - 1, height - 1)
     ctx.stroke()
 
+    // Horizontal grid lines (25/50/75/100%)
     ctx.setSourceRGBA(r, g, b, 0.10)
     for (let p = 0.25; p < 1; p += 0.25) {
         const y = height * (1 - p)
@@ -75,6 +80,7 @@ const drawGraph = (ctx: any, width: number, height: number, history: number[]) =
 
     if (history.length < 2) return
 
+    // Plot line
     const stepX = width / (HIST_LEN - 1)
     ctx.setSourceRGBA(r, g, b, 0.90)
     ctx.setLineWidth(2)
@@ -86,6 +92,7 @@ const drawGraph = (ctx: any, width: number, height: number, history: number[]) =
     }
     ctx.stroke()
 
+    // Filled area below the line
     if (history.length >= 2) {
         ctx.setSourceRGBA(r, g, b, 0.25)
         for (let i = 0; i < history.length; i++) {
@@ -153,6 +160,7 @@ const ensure = () => {
     return s
 }
 
+// tells the bar which stat frame should look active - the one whose graph is open
 export const currentGraphType = (): "cpu" | "mem" | null => {
     if (!s || !s.win?.visible) return null
     return s.type
@@ -161,6 +169,7 @@ export const currentGraphType = (): "cpu" | "mem" | null => {
 export const toggleGraph = (type: "cpu" | "mem") => {
     const st = ensure()
 
+    // Toggle off if visible AND same type — otherwise switch type / show
     if (st.win.visible && st.type === type) {
         if (st.timerId !== null) { GLib.source_remove(st.timerId); st.timerId = null }
         st.reveal.close(() => { st.win.visible = false })

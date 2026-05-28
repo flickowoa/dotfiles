@@ -69,9 +69,11 @@ const compile_css = async () => {
 const cacheBothCss = async () => {
     writeFile(DATA_SCSS, `$screen_width:${SCREEN_WIDTH}px;$screen_height:${SCREEN_HEIGHT}px;`)
     try {
+        // Dark
         writeFile(COLOR_SCSS, readFile(`${OLD_AGS}/style/color-dark.scss`))
         await execAsync(["sassc", SCSS, CSS])
         _cachedDarkCss = readFile(CSS)
+        // Light
         writeFile(COLOR_SCSS, readFile(`${OLD_AGS}/style/color-light.scss`))
         await execAsync(["sassc", SCSS, CSS])
         _cachedLightCss = readFile(CSS)
@@ -82,6 +84,7 @@ const reload_css = async (isDark: boolean) => {
     try {
         const css = isDark ? _cachedDarkCss : _cachedLightCss
         if (!css) {
+            // Fallback — compile on-demand if cache is empty
             const colorContent = readFile(`${OLD_AGS}/style/color-${isDark ? "dark" : "light"}.scss`)
             writeFile(COLOR_SCSS, colorContent)
             await execAsync(["sassc", SCSS, CSS])
@@ -119,6 +122,10 @@ const reserveSpace = async () => {
     const t = Math.max(top_bar_height, 0)
     const b = Math.max(bottom_bar_height, 0)
     if (t === 0 && b === 0) return
+    // only re-issue when the values actually change. every addreserved makes hypr
+    // recompute all the window decoration stuff, and spamming it every 5s was
+    // enough to crash the compositor on me once. bar height is basically constant
+    // so after the first call this is a no-op.
     if (t === last_reserved_t && b === last_reserved_b) return
     last_reserved_t = t
     last_reserved_b = b
@@ -145,6 +152,8 @@ const Bar = () => {
         className: "top",
         css: `min-width: ${SCREEN_WIDTH}px;`,
         children: [
+            // one horizontal bar across the whole screen width. every frame hexpands
+            // so they spread evenly instead of bunching, like the in-game tab strip.
             Box({
                 hexpand: true,
                 vpack: "center", hpack: "fill",
@@ -196,11 +205,16 @@ const queueWsSwitch = (target: string): void => {
         if (pendingTarget !== null) {
             const next = pendingTarget
             pendingTarget = null
+            // tiny gap so the compositor settles before the next one
             timeout(40, () => queueWsSwitch(next))
         }
     }).catch(print)
 }
 
+// force-hide every modal/overlay (not the bar). these are fullscreen overlay
+// surfaces and if one ever gets stuck visible it eats all the input while the
+// clock keeps ticking. bound to CTRL SHIFT ALT,c so i can recover without killing
+// ags. prints what it hid too.
 const MODAL_WINDOWS = [
     "tray", "tray_props", "tray_bluetooth",
     "settings", "bg_settings", "player",
@@ -247,6 +261,7 @@ App.start({
             triggerWsAnim()
             reply("ok")
         } else if (request.startsWith("ws-go ") || request.startsWith("ws-rel ")) {
+            // build the workspace arg - either "N" or "e+1"/"e-1"
             const target = request.startsWith("ws-go ")
                 ? request.slice(6).trim()
                 : `e${request.slice(7).trim()}`
@@ -281,6 +296,7 @@ App.start({
             timeout(1000, () => reserveSpace())
         })
 
+        // windows - bg_settings has to come before settings (settings shows/hides it)
         Bar()
         WsAnimWindow()
         PlayerWindow()

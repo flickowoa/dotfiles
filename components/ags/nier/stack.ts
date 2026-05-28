@@ -72,6 +72,8 @@ export const modalClose = (name: string) => {
     recalc()
 }
 
+// ── Drag dismiss anim
+// when clicking on tiles, and opening its modals, drag from right to left to dismiss.
 
 export const addDragDismiss = (
     win: any,
@@ -89,6 +91,7 @@ export const addDragDismiss = (
         animating = false
     }
 
+    // spring easing: overshoot then settle
     const springEasing = (t: number): number => {
         const damping = 0.55
         const freq = 1.6

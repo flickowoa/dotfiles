@@ -37,7 +37,11 @@ export const PlayerWindow = () => {
         child: _reveal.container,
         setup: (self: any) => {
             _win = self
+            // start/stop cava with the window - this catches both togglePlayer and
+            // the closeall path, so the visualiser only eats cpu while its on screen
             self.connect("notify::visible", () => self.visible ? cavaStart() : cavaStop())
+            // no auto-show, the player only opens on Alt+Super+O (which hits
+            // togglePlayer via the ags socket)
             void mpris   // keep the mpris binding alive for nowplaying.ts
         },
     })

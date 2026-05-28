@@ -1,7 +1,10 @@
+// Factory wrappers — astal/gtk3 exports GObject classes that require `new`.
+// This module re-exports them as plain functions matching the AGS 1.x call style.
 import { Widget as W, App, Astal } from "astal/gtk3"
 import { playClick } from "./widgets/sounds.ts"
 export { App, Astal }
 
+// Window anchor/layer/exclusivity/keymode helpers — import these instead of strings
 export const Anchor      = Astal.WindowAnchor
 export const Layer       = Astal.Layer
 export const Exclusivity = Astal.Exclusivity
@@ -18,6 +21,7 @@ export const Button     = (p?: any) => {
 }
 export const Label      = (p?: any) => new W.Label(p)
 export const Icon       = (p?: any) => new W.Icon(p)
+// Window auto-registers with App so the compositor sees it as a layer-shell surface
 export const Window     = (p?: any) => new W.Window({ application: App, ...p })
 export const EventBox   = (p?: any) => new W.EventBox(p)
 export const Overlay    = (p?: any) => new W.Overlay(p)

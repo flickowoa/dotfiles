@@ -35,6 +35,7 @@ export const NierBorder = ({
         child: inner,
     })
 
+    // Poll cursor position every 100ms to update which icon is "active"
     const t = interval(100, async () => {
         try {
             const [x, y] = await get_cursor()

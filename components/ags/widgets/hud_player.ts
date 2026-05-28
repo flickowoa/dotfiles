@@ -48,6 +48,7 @@ const downloadCover = async (url: string): Promise<string | null> => {
             await execAsync(["curl", "-sLf", "--max-time", "8", "-o", COVER_TMP, url])
             return COVER_TMP
         }
+        // Already a local path
         return url
     } catch (e) {
         print("HudPlayer downloadCover failed:", e)
@@ -65,6 +66,7 @@ const loadPixbuf = (path: string): any => {
 }
 
 export const HudPlayer = () => {
+    // ── Cover ──────────────────────────────────────────────────────────────
     const cover = DrawingArea({})
     cover.set_size_request(COVER_SIZE, COVER_SIZE)
     let lastDrawnVersion = -1
@@ -82,6 +84,7 @@ export const HudPlayer = () => {
                 return false
             } catch {}
         }
+        // Placeholder triangle
         const [r, g, b] = dark.get()
             ? [218/255, 212/255, 187/255]
             : [87/255,  84/255,  74/255]
@@ -97,6 +100,7 @@ export const HudPlayer = () => {
         return false
     })
 
+    // ── Text ──────────────────────────────────────────────────────────────
     const titleLbl = Label({
         label: "—",
         css: `font-family:${FONT};font-size:11px;color:${TXT_BRIGHT};letter-spacing:1px;`,
@@ -111,6 +115,7 @@ export const HudPlayer = () => {
         xalign: 0,
     })
 
+    // ── Progress bar ──────────────────────────────────────────────────────
     let _progressFrac = 0
     const progress = DrawingArea({})
     progress.set_size_request(190, 3)
@@ -126,6 +131,7 @@ export const HudPlayer = () => {
         return false
     })
 
+    // ── Controls ──────────────────────────────────────────────────────────
     const btnCss = `
         font-family: ${FONT};
         font-size: 14px;
@@ -170,6 +176,7 @@ export const HudPlayer = () => {
                 } else {
                     await runPlayerctl(["play-pause"])
                 }
+                // update UI labels via the tick
             } catch (e) { print(e) }
         },
     })
@@ -191,7 +198,9 @@ export const HudPlayer = () => {
         },
     })
 
+    // ── Update tick ───────────────────────────────────────────────────────
     let pendingCoverFetch = false
+    // Update UI according to the currently-active player
     const update = async () => {
         const player = currentPlayer()
         if (!player) {
@@ -215,6 +224,9 @@ export const HudPlayer = () => {
         }
         progress.queue_draw()
 
+        // cover - only fetch when the url changes. if mpris doesn't provide
+        // cover_art, try playerctl as a backup since some players (spotify)
+        // expose better urls via playerctl.
         let url = (player.cover_art ?? "").trim()
         if (!url) {
             try {

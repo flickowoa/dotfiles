@@ -6,6 +6,7 @@ import { NierDropDownButton } from "../nier/dropdown.ts"
 import { button_label_2, settings_title_bottom, settings_title_top } from "../scaling.ts"
 import { openBluetoothModal, setBluetoothPowered } from "../windows/bluetooth/bluetooth.ts"
 
+// AstalBluetooth — installed via paru -S libastal-bluetooth-git
 import AstalBluetooth from "gi://AstalBluetooth"
 const bluetooth = AstalBluetooth.get_default()
 

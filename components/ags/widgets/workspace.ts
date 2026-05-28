@@ -7,6 +7,7 @@ import { playClick } from "./sounds.ts"
 import { drawWsIcon } from "./ws_icons.ts"
 import { RailTab } from "../nier/menu.ts"
 
+// AstalHyprland — installed via paru -S libastal-hyprland-git
 import AstalHyprland from "gi://AstalHyprland"
 const hyprland = AstalHyprland.get_default()
 const ICON_PX = 26
@@ -22,6 +23,7 @@ export const WorkspaceTiles = () => {
 
     const icon = DrawingArea({ hexpand: false, vexpand: false })
     icon.set_size_request(ICON_PX, ICON_PX)
+    // draw centred against the live allocation, else the icon sticks to the top
     icon.connect("draw", (_w: any, ctx: any) => {
         const a = icon.get_allocation()
         const S = Math.min(a.width || ICON_PX, a.height || ICON_PX) * 0.92
@@ -61,6 +63,7 @@ export const WorkspaceTiles = () => {
     
     dark.subscribe(() => icon.queue_draw())
 
+    // return the RailTab box 
     tile.connect("unrealize", () => refreshTimer.cancel())
     return tile
 }
@@ -136,7 +139,10 @@ export const Workspaces = () =>
                     }
                 },
 
+                // hook into active workspace changes
                 setup: (self: any) => {
+                    // self is the inner Button, parent is the container box - hook
+                    // the container, timeout just to grab its reference
                     import("astal").then(({ timeout }) => timeout(1, () => {
                         const container = self.parent
                         hyprland.connect("notify::focused-workspace", () => {

@@ -1,3 +1,5 @@
+// osd - volume/brightness overlay, nier style. auto-hides 2s after the last
+// change, coalesces rapid ones.
 import { Window, Box, Label, Anchor, Layer, Exclusivity } from "../../widget.ts"
 import { subprocess, execAsync } from "astal"
 import GLib from "gi://GLib"
@@ -135,9 +137,11 @@ export const OsdWindow = () => {
         }),
     })
 
+    // ── Volume: pactl subscribe ──────────────────────────────────────────
     subprocess(
         ["pactl", "subscribe"],
         (line: string) => {
+            // Only react to sink changes (not sink-input, source, etc.)
             if (!/on sink #\d/.test(line)) return
             execAsync(["sh", "-c", "wpctl get-volume @DEFAULT_AUDIO_SINK@"])
                 .then((out: string) => {
@@ -150,6 +154,7 @@ export const OsdWindow = () => {
         (err: string) => print("osd pactl:", err)
     )
 
+    // ── Brightness: poll /sys/class/backlight every 250 ms ───────────────
     const brightDir = "/sys/class/backlight/intel_backlight"
     const maxBright = readSysInt(`${brightDir}/max_brightness`)
     if (maxBright > 0) {

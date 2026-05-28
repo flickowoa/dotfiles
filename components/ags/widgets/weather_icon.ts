@@ -1,3 +1,7 @@
+// Weather condition → monochrome vector icon, drawn in Cairo so it recolours
+// with the theme (same approach as ws_icons.ts). Maps the free-text condition
+// from wttr.in (e.g. "Partly cloudy", "Light rain") to a small glyph.
+/// Default city set is usually London, but you can search directly on modal to set your location to curl on wttr.in
 
 const TAU = Math.PI * 2
 
@@ -19,6 +23,7 @@ export const weatherKind = (condition: string): Kind => {
     return "cloud"
 }
 
+// Draw a cloud icon  
 const cloud = (ctx: any, S: number, cx = 0.5, cy = 0.58, scale = 1) => {
     const r = 0.16 * S * scale
     const X = cx * S, Y = cy * S
@@ -62,6 +67,7 @@ export const drawWeatherIcon = (
             sun(px(0.5), px(0.5), 0.20 * S, true)
             break
         case "moon": {
+            // crescent: full disc minus an offset disc (even-odd)
             ctx.newSubPath(); ctx.arc(px(0.52), px(0.5), 0.26 * S, 0, TAU)
             ctx.newSubPath(); ctx.arc(px(0.63), px(0.43), 0.24 * S, 0, TAU)
             try { ctx.setFillRule(1) } catch {}   // EVEN_ODD

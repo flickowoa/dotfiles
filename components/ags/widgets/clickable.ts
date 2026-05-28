@@ -1,3 +1,4 @@
+// Single + double click helper for NieR HUD frames.
 import { EventBox } from "../widget.ts"
 import GLib from "gi://GLib"
 import Gdk from "gi://Gdk?version=3.0"
