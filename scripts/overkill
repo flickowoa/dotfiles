@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+DIR=$(cd "$(dirname "$0")" && pwd)
+
+case "${1:-enter}" in
+  enter)
+    notify-send -p -u critical -t 0 "\"KILL MODE\"" "Click a window to obliterate it, ESC to cancel" > /tmp/kill-mode-notif-id
+    "$DIR/overkill.py" &
+    echo $! > /tmp/kill-overlay-pid
+    hyprctl dispatch submap kill
+    ;;
+  kill)
+    PID=$(hyprctl activewindow -j | grep -oP '"pid":\s*\K\d+')
+    [ -z "$PID" ] || [ "$PID" -le 1 ] && exit 1
+    APP=$(ps -p "$PID" -o comm= 2>/dev/null | tr -d ' ')
+    [ -z "$APP" ] && exit 1
+    case "$APP" in
+      Hyprland|hyprland|systemd|systemd-logind|login|Xorg|Xwayland|wayfire|river|emacs|ssh|sshd|sudo|su|dbus-daemon|dbus-broker|polkit*) exit 1 ;;
+    esac
+    pkill -9 -x "$APP" 2>/dev/null
+    "$0" cleanup
+    ;;
+  exit|cleanup)
+    ID=$(cat /tmp/kill-mode-notif-id 2>/dev/null)
+    [ -n "$ID" ] && busctl call --user org.freedesktop.Notifications /org/freedesktop/Notifications org.freedesktop.Notifications CloseNotification u "$ID" 2>/dev/null
+    PID=$(cat /tmp/kill-overlay-pid 2>/dev/null)
+    [ -n "$PID" ] && kill "$PID" 2>/dev/null
+    rm -f /tmp/kill-overlay-pid /tmp/kill-mode-notif-id
+    hyprctl dispatch submap reset
+    ;;
+esac
