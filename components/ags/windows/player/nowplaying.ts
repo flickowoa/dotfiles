@@ -5,17 +5,31 @@ import Pango from "gi://Pango"
 import { Variable, execAsync, timeout, subprocess, interval } from "astal"
 import { arradd, arrremove, dark, assetsDir, rand_int, AGS_DIR } from "../../env.ts"
 
-import AstalMpris from "gi://AstalMpris"
-const mpris = AstalMpris.get_default()
+import { mpris } from "../../lib/mpris.ts"
 
 const currentPlayer = (): any => {
-    const list = (mpris.players ?? []) as any[]
-    if (!list.length) return null
-    const playing = list.find(p => p?.playback_status === "Playing")
-    if (playing) return playing
-    const paused = list.find(p => p?.playback_status === "Paused")
-    if (paused) return paused
-    return list[0]
+    try {
+        const list = (mpris?.players ?? []) as any[]
+        if (!list.length) return null
+        const playing = list.find(p => p?.playback_status === "Playing")
+        if (playing) return playing
+        const paused = list.find(p => p?.playback_status === "Paused")
+        if (paused) return paused
+        return list[0]
+    } catch (e) {
+        try { print("mpris currentPlayer error:", e) } catch {}
+        return null
+    }
+}
+
+const runPlayerctl = async (args: string[], pname?: string) => {
+    try {
+        const cmd = pname ? ["playerctl", `--player=${pname}`, ...args] : ["playerctl", ...args]
+        return (await execAsync(cmd)).trim()
+    } catch (e) {
+        try { print("playerctl failed:", e) } catch {}
+        return ""
+    }
 }
 
 const COVER_TMP = "/tmp/yorha_cover.png"
@@ -241,8 +255,16 @@ export const NowPlaying = () => {
                 child: Label({ label: "⏮︎", className: "heading" }),
                 onClicked: async (self: any) => {
                     try {
-                        const player = currentPlayer(); if (!player) return
-                        try { player.previous() } catch (e) { print("prev failed:", e) }
+                        const player = currentPlayer()
+                        if (player) {
+                            try { player.previous() } catch (e) {
+                                try { print("mpris prev failed, falling back to playerctl:", e) } catch {}
+                                const pname = playerctlNameFromBus(player.bus_name ?? "")
+                                await runPlayerctl(["previous"], pname)
+                            }
+                        } else {
+                            await runPlayerctl(["previous"])
+                        }
                         arradd(self, "pressed")
                         await new Promise(r => setTimeout(r, 100))
                         arrremove(self, "pressed")
@@ -281,11 +303,20 @@ export const NowPlaying = () => {
                 }),
                 onClicked: async (self: any) => {
                     try {
-                        const player = currentPlayer(); if (!player) return
-                        try { player.play_pause() } catch (e) { print("play_pause failed:", e) }
+                        let player = currentPlayer()
+                        if (player) {
+                            try { player.play_pause() } catch (e) {
+                                try { print("mpris play_pause failed, fallback to playerctl:", e) } catch {}
+                                const pname = playerctlNameFromBus(player.bus_name ?? "")
+                                await runPlayerctl(["play-pause"], pname)
+                                player = currentPlayer()
+                            }
+                        } else {
+                            await runPlayerctl(["play-pause"])
+                        }
                         const lbl = self?.child
                         if (lbl && "label" in lbl) {
-                            lbl.label = player.playback_status === "Playing" ? "⏸︎" : "▶︎"
+                            lbl.label = player?.playback_status === "Playing" ? "⏸︎" : "▶︎"
                         }
                         arradd(self, "pressed")
                         await new Promise(r => setTimeout(r, 100))
@@ -300,8 +331,16 @@ export const NowPlaying = () => {
                 child: Label({ label: "⏭︎", className: "heading" }),
                 onClicked: async (self: any) => {
                     try {
-                        const player = currentPlayer(); if (!player) return
-                        try { player.next() } catch (e) { print("next failed:", e) }
+                        const player = currentPlayer()
+                        if (player) {
+                            try { player.next() } catch (e) {
+                                try { print("mpris next failed, falling back to playerctl:", e) } catch {}
+                                const pname = playerctlNameFromBus(player.bus_name ?? "")
+                                await runPlayerctl(["next"], pname)
+                            }
+                        } else {
+                            await runPlayerctl(["next"])
+                        }
                         arradd(self, "pressed")
                         await new Promise(r => setTimeout(r, 100))
                         arrremove(self, "pressed")

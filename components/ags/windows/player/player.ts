@@ -2,8 +2,7 @@ import { App, Box, Window, Anchor, Layer, Exclusivity } from "../../widget.ts"
 import { NowPlaying, cavaStart, cavaStop } from "./nowplaying.ts"
 import { RevealBox, type Reveal } from "../../nier/anim.ts"
 
-import AstalMpris from "gi://AstalMpris"
-const mpris = AstalMpris.get_default()
+import { mpris } from "../../lib/mpris.ts"
 
 let _win: any = null
 let _content: any = null
