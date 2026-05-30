@@ -1,0 +1,87 @@
+#app-mount,
+.title-3hptVQ,
+.modeDefault-2fEh7a,
+.container_fc4f04,
+[role=menu],
+.titleBar_a934d8 {
+  cursor: url("https://accrazed.github.io/YoRHA-UI-BetterDiscord/assets/cursors/Hack_Normal_Select_v2.cur"), default !important;
+}
+
+.timestamp_f9f2ca,
+.searchBar-zdmu7v,
+.contents_f9f2ca,
+textarea,
+.textAreaSlate_d0696b div div,
+.textAreaSlate_bdf0de div div,
+input {
+  cursor: url("https://accrazed.github.io/YoRHA-UI-BetterDiscord/assets/cursors/Hack_Text_Select_v2.cur"), default !important;
+}
+
+a,
+button,
+.button,
+.link,
+.folder_bc7085,
+.item-3eFBNF,
+.css-gvi9bl-control,
+.css-rzbxvl-option,
+.css-1ba14n5-option,
+.css-ku6vh5-indicatorContainer,
+.avatar_f9f2ca,
+.fileInput-2wWHbw,
+.container_cebd1c,
+.input-2XRLou,
+.profileBadge_b64375,
+.item-1OdjEX,
+.container_b2ca13 .avatar_b2ca13,
+.wrapper_c5f96a,
+.result_e3c1c6,
+.labelClickable-eiZOrp,
+.buttonWrapper_f9af59,
+.button_Jt-tIg,
+.nameTag_b2ca13,
+.hoverRoll_e07331,
+.friendsOnline_2JkivW,
+.basicChannelRowLink_d8bfb3,
+.header_fd6364,
+.channelTabs-newTab,
+.channelTabs-closeTab,
+.themed_a0,
+.peopleListItem_d51464,
+.voiceSectionDetails_cd82a7,
+.applicationStreamingHoverWrapper_cd82a7,
+.button_a24e84,
+[role=menuitem],
+[role=menuitemcheckbox],
+[role=menuitemradio],
+[role=button],
+[role=button] header,
+[type=button],
+[type=button] header,
+[type=checkbox],
+[role=img],
+label,
+.item-2idW98,
+.additionalActionsIcon-1FoUlE,
+.clickable_d808b0:hover .layout_d808b0,
+.clickable_d808b0:hover .layout_d808b0,
+.actionIcon_f6f816,
+.clickable__2869d,
+.cursorPointer_a7d72e,
+.labelClickable_f6cde8,
+.friendsTable-133bsv .friendsRow-2yicud {
+  cursor: url("https://accrazed.github.io/YoRHA-UI-BetterDiscord/assets/cursors/Hack_Link_Select_v2.cur"), default !important;
+}
+
+.grabber-2GQyvM {
+  cursor: url("https://accrazed.github.io/YoRHA-UI-BetterDiscord/assets/cursors/Hack_Horizontal_Resize_v2.cur"), default !important;
+}
+
+.disabled,
+.innerDisabled__37f59,
+.disabled_d6a4eb,
+.disabled-2qTmnp,
+.modeLocked_d8bfb3,
+.modeLocked_d8bfb3 .mainContent-20q_Hp {
+  cursor: url("https://accrazed.github.io/YoRHA-UI-BetterDiscord/assets/cursors/Hack_Unavailable_v2.cur"), default !important;
+}

@@ -28,10 +28,12 @@ $border_dist: 3px;
     );
     background-size: 200%;
     min-width: 200px;
+    color: $brown;
     transition: background 0.3s cubic-bezier(0.15, 0.79, 0, 1);
   }
   .nier-button-hover label {
     background-position: -100%;
+    color: $highlight;
     transition: background 0.3s cubic-bezier(0.15, 0.79, 0, 1);
   }
 }
@@ -52,10 +54,12 @@ $border_dist: 3px;
     );
     background-size: 200%;
     min-width: 200px;
+    color: $brown;
     transition: background 0.3s cubic-bezier(0.15, 0.79, 0, 1);
   }
   .nier-button-hover label {
     background-position: -100%;
+    color: $highlight;
     transition: background 0.3s cubic-bezier(0.15, 0.79, 0, 1);
   }
   .nier-button-hover-icon-hidden {

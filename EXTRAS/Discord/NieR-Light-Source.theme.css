@@ -1,0 +1,88 @@
+/**
+ * @name NieR: Automata UI Light
+ * @version 1.4
+ * @description Glory to Mankind. || 
+ * Thanks to JulioDRai for letting me use their cursors! 
+ * ~https://www.deviantart.com/juliodrai || 
+ * Thanks to GOmonkeymanGO for letting me use some of their code 
+ * ~https://github.com/ChaseIngebritson/YoRHa-Discord-Theme || 
+ * @website https://github.com/AccraZed/YoRHA-UI-BetterDiscord
+ * @author Accrazed#2710
+ * @invite X4nBPCa
+ * @patreon https://www.patreon.com/accrazed
+ * @authorId 153562159161278473
+ */
+/*
+ *  :::.       .,-:::::   .,-::::: :::::::..    :::.     :::::::::.,:::::::::::::-.  
+ *  ;;`;;    ,;;;'````' ,;;;'````' ;;;;``;;;;   ;;`;;    '`````;;;;;;;'''' ;;,   `';,
+ * ,[[ '[[,  [[[        [[[         [[[,/[[['  ,[[ '[[,      .n[[' [[cccc  `[[     [[
+ * c$$$cc$$$c $$$        $$$         $$$$$$c   c$$$cc$$$c   ,$$P"   $$""""   $$,    $$
+ * 888   888,`88bo,__,o,`88bo,__,o, 888b "88bo,888   888,,888bo,_  888oo,__ 888_,o8P'
+ * YMM   ""`   "YUMMMMMP" "YUMMMMMP"MMMM   "W" YMM   ""`  `""*UMM  """"YUMMMMMMMP"`  
+ */
+
+
+// COMPACTED INTO LOCAL FILES TO AVOID CSP ERRORS!
+// ** All credits above
+@import 'nier/stylesheet.css'; 
+@import 'nier/cursor.css'; 
+@import 'nier/main.css'; 
+@import 'nier/light.css'; 
+
+
+
+
+/* GLOBAL VARIABLES */
+:root {
+	--color-high: rgb(218, 212, 187);
+	--color-low: rgb(87, 84, 74);
+	--color-mid: rgb(151, 147, 129);
+	--color-alert: rgb(205, 102, 77);
+	--color-high-trans: rgba(218, 212, 187, 0.8);
+	--color-low-trans: rgba(87, 84, 74, 0.6);
+	--color-alert-trans: rgba(205, 102, 77, 0.7);
+	--nier-font: sce-ps3_rodin_latinregular;
+}
+
+
+.icon__6e9f8
+ { 
+ width: 31px !important;
+   height: 31px !important;
+   object-fit: cover;
+ 
+   /* 2. YoRHa Muted Beige/Gray Filter Matrix */
+   filter: grayscale(120%) brightness(125%) contrast(25%) sepia(55%) hue-rotate(15deg) saturate(40%) !important 
+;
+ 
+   /* 3. Give it a sharp, angular YoRHa UI shape (Octagon / Chipped Corners) */
+   clip-path: polygon(00% 0%, 90% 0%, 100% 00%, 100% 65%, 75% 100%, 30% 120%, 0% 100%, 0% 20%) !important;
+   
+   /* Optional: Adds a tiny bit of opacity decay like the HUD */
+   opacity: 0.8;
+
+ }
+
+.icon_f34534 {
+  background-clip: padding-box;
+  background-color: none;
+  background-position: 50%;
+  background-size: 100% 100%;
+  position: relative;
+  width: 23px !important;
+  height: 23px !important;
+  object-fit: cover !important;
+  filter: grayscale(120%) brightness(125%) contrast(25%) sepia(55%) hue-rotate(15deg) saturate(40%) !important;
+  clip-path: polygon(00% 0%, 90% 0%, 100% 00%, 100% 65%, 75% 100%, 30% 120%, 0% 100%, 0% 20%) !important;
+  opacity: 0.8;
+  margin-left: 12px !important;
+  margin-left: 10px;
+}
+
+
+
+.vc-shiki-container { 
+
+    background-color: var(--black-160) !important;
+
+    }

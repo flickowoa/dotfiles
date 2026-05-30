@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* ==============================================================================
+   YoRHa UI Custom Fonts (Sony Rodin & MuseoModerno Fallbacks)
+   ============================================================================== */
+
+/* Light Weight (300) */
+@font-face {
+    font-family: 'sce-ps3_rodin_latinregular';
+    src: url('Rodin-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Normal / Medium Weight (400) */
+@font-face {
+    font-family: 'sce-ps3_rodin_latinregular';
+    src: url('Rodin-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Bold Weight (700) */
+@font-face {
+    font-family: 'sce-ps3_rodin_latinregular';
+    src: url('Rodin-Regular.woff2') format('woff2'); /* Adjust to 'Rodin-Bold.woff2' if you have the file */
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ==============================================================================
+   Theme Configuration Tokens
+   ============================================================================== */
+:root {
+    /* Primary font stack mimicking actual NieR:Automata UI systems */
+    --font-primary: 'sce-ps3_rodin_latinregular', 'MuseoModerno', sans-serif;
+    
+    /* Document/UI Weight Mappings */
+    --weight-light: 300;
+    --weight-normal: 400;
+    --weight-bold: 700;
+}
+
+/* Unused italic variants safely archived below 
+@font-face {
+    font-family: 'sce-ps3_rodin_latinregular';
+    src: url('Rodin-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'sce-ps3_rodin_latinregular';
+    src: url('Rodin-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'sce-ps3_rodin_latinregular';
+    src: url('Rodin-Regular.woff2') format('woff2');
+    font-weight: 700;
+    font-style: italic;
+}
+*/

@@ -1,0 +1,19 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "compilerOptions": {
+        "strict": false,
+        "module": "ES2022",
+        "target": "ES2022",
+        "lib": ["ES2022"],
+        "moduleResolution": "Bundler",
+        "allowImportingTsExtensions": true,
+        "noEmit": true,
+        "paths": {
+            "astal": ["/usr/share/astal/gjs/src/index.ts"],
+            "astal/gtk3": ["/usr/share/astal/gjs/src/gtk3/index.ts"],
+            "ags": ["/usr/share/ags/js/lib/index.ts"],
+            "ags/gtk3": ["/usr/share/ags/js/lib/gtk3/index.ts"]
+        }
+    },
+    "include": ["./**/*.ts"]
+}
