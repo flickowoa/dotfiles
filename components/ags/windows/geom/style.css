@@ -1,0 +1,14 @@
+.nier-geom-select {
+  background: transparent;
+  border: 3px #f4f0e1 solid;
+  border-radius: 0px;
+  box-shadow: 0px 0px 10px #f4f0e1, inset 0px 0px 10px #f4f0e1;
+  animation: select_pulse 10s ease infinite forwards; }
+
+@keyframes select_pulse {
+  30% {
+    box-shadow: 0px 0px 10px #f4f0e1, inset 0px 0px 10px #f4f0e1; }
+  50% {
+    box-shadow: 0px 0px 20px #f4f0e1, inset 0px 0px 20px #f4f0e1; }
+  70% {
+    box-shadow: 0px 0px 10px #f4f0e1, inset 0px 0px 10px #f4f0e1; } }
