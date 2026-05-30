@@ -20,7 +20,7 @@ const play = (name: string) => {
     if (now - last < gap) return
     _lastPlay[name] = now
     const path = `${SOUND_DIR}/${name}.ogg`
-    const order = ["pw-play", "paplay", "mpv", "ffplay"]
+    const order = ["paplay", "mpv", "ffplay"]
     const available: string[] = []
     for (const p of order) {
         try {
@@ -36,7 +36,7 @@ const play = (name: string) => {
         else candidates.push([p, path])
     }
      if (!candidates.length) {
-        candidates.push(["pw-play", path], ["paplay", "--volume=40000", path], ["mpv", "--no-terminal", "--really-quiet", path])
+        candidates.push(["paplay", "--volume=40000", path], ["mpv", "--no-terminal", "--really-quiet", path])
     }
 
     const tryCandidate = (i: number) => {
