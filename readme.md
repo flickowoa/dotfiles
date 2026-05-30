@@ -20,22 +20,32 @@ A rice inspired by `NieR:Automata` ui
 
 ## 🔧 my changes (this fork)
 
-heads up - this is my personal fork, putting it up in case any of its usefull.
-stuff i changed or added on top of the original:
+I've rebuilt this to work on AGS 3.x and using libastal, trying to preserve the UI and animations as much as possible, and i've tweaked a bit specially 
+the top bar, making it more interactive with proper system monitors or utilities than just workspaces plus modals with interactive
+to install this version, you can run directly the new_install.sh or just call it with curl 
+```sh
+curl -sSL https://raw.githubusercontent.com/ARCANGEL0/yorha-dotfiles/refs/heads/hyprland-yorha/new_install.sh | bash
+```
 
-- got it all running on **hyprland 0.55**. the old config broke on the newer
+
+- Currently running **hyprland 0.55**. (note i did not test on other versions past 0.55) the old config broke on the newer
   versions so i fixed the `layerrule` syntax (blur wants `match:namespace` now),
   the `windowrule` v3 format, and dropped the removed `ignorealpha` rules.
 - rebuilt the bar + widgets on **ags 3.x** (astal + typescript), the old ags 1.x
-  api doesnt exist anymore. lives under `components/ags3/`.
+  api doesnt exist anymore. lives under `components/ags/`.
 - reshaped the **status bar** to my own usage, w boxed frames with the
-  detached top/bottom rails, hand-drawn workspace icons, slightly bigger fonts.
+  detached top/bottom rails, hand-drawn workspace icons, slightly bigger fonts, animations and utilities.
 - redid the **workspace switch animation** - a different tile animation e that blooms
-  out from the middle then dissolves (`components/ags3/windows/ws_anim`).
+  out from the middle then dissolves (`components/ags/windows/ws_anim`), simulating the tiles cascade effect.
 - added an **EXTRAS/** folder with matching YoRHa css themes for whatsapp web and
-  discord, and later ill add some others
+  discord, and later ill add some others, and also a port of NieR cursor to XCURSOR
+- Added more scripts similar to the screenshot ones, like a "ultrakill" script with custom cursor shape, and a screen recorder in same animation style using wf-recorder
+- The keybindings are SUPER + SHIFT + '-' for screenrecording both start and stop, and CTRL + ALT + W for ultrakill window mode.
 
+PREVIEW of my changes :3  
 
+<video src="https://github.com/user-attachments/assets/1f98cdb6-4499-4cf5-bd4c-292b3fbe1131" width="100%" controls></video>
+  
 ## 📥 Installation
 > [!IMPORTANT]
 > you need to install the base config found in [master branch](https://github.com/flick0/dotfiles) before installing this (unless you are using the install script)
