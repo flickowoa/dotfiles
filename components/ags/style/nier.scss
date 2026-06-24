@@ -18,6 +18,10 @@
   padding-left: 12px;
   padding-right: 12px;
   transition: background-position 0.2s cubic-bezier(0.15, 0.79, 0, 1);
+
+  icon {
+    font-size: 40px;
+  }
 }
 
 .settings-button.hover {

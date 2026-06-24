@@ -21,8 +21,9 @@ export const NierBorder = ({
     const iconCount = Math.floor(SCREEN_WIDTH / icon_width) + 1
     const icons = Array.from({ length: iconCount }, () =>
         Icon({
-            icon: assetsDir() + "/nier-border.svg",
+            icon: assetsDir() + "/nier-border-full.svg",
             size: icon_width,
+            className: "nier-border-icon",
         })
     )
 
@@ -35,7 +36,6 @@ export const NierBorder = ({
         child: inner,
     })
 
-    // Poll cursor position every 100ms to update which icon is "active"
     const t = interval(100, async () => {
         try {
             const [x, y] = await get_cursor()

@@ -28,10 +28,10 @@ if ! command -v paru >/dev/null 2>&1; then
 fi
 
 echo "Installing base packages"
-sudo pacman -S --noconfirm --needed  wf-recorder gcc-libs gcc glibc lib32-glibc socat kitty mpv  cmake cpio pkgconf gcc git
+sudo pacman -S  --needed  wf-recorder gcc-libs gcc glibc lib32-glibc socat kitty mpv  cmake cpio pkgconf gcc git
 echo "Installing AUR packages..."
 set +e 
-paru -S --noconfirm --ask 4 --needed hyprland-git foot swww grim slurp wl-clipboard fish light swaylock-effects-git swayidle theme.sh sddm sassc starship cava imagemagick hyprlock-git xdg-desktop-portal-hyprland-git aylurs-gtk-shell-git libastal-gjs libastal-hyprland-git libastal-mpris-git libastal-notifd-git libastal-network-git libastal-bluetooth-git libastal-wireplumber-git
+paru -S --ask 4 --needed hyprland-git foot swww grim slurp wl-clipboard fish light swaylock-effects-git swayidle theme.sh sddm sassc starship cava imagemagick hyprlock-git xdg-desktop-portal-hyprland-git aylurs-gtk-shell-git libastal-gjs libastal-hyprland-git libastal-mpris-git libastal-notifd-git libastal-network-git libastal-bluetooth-git libastal-wireplumber-git
 if [ $? -ne 0 ]; then
     echo "AUR installation failed. Fix the errors and run the script again."
     exit 1

@@ -1,12 +1,14 @@
-import { App, Window, Box } from "./widget.ts"
+import { App, Window, Box, Scrollable, Button, Icon } from "./widget.ts"
 import { Anchor, Layer, Exclusivity } from "./widget.ts"
 import Gio from "gi://Gio"
+import Gdk from "gi://Gdk?version=3.0"
 import { execAsync, timeout } from "astal"
 import {
     dark, HOME, SCREEN_WIDTH, SCREEN_HEIGHT,
     YORHA_DIR, AGS_DIR, assetsDir,
 } from "./env.ts"
-import { WorkspaceTiles } from "./widgets/workspace.ts"
+import { WorkspaceTiles, Workspaces } from "./widgets/workspace.ts"
+import { NierBorder } from "./widgets/nier_border.ts"
 import { PlayerWindow, togglePlayer } from "./windows/player/player.ts"
 import { SettingsWindow } from "./windows/settings/settings.ts"
 import { SettingsBgWindow } from "./windows/settingsbg/settingsbg.ts"
@@ -29,7 +31,7 @@ import {
     HudBrightness, HudTemp, HudVolume,
 } from "./widgets/hud.ts"
 import { SpinningLogo } from "./widgets/spinning_logo.ts"
-import { top_icon_size } from "./scaling.ts"
+import { top_icon_size, top_spacing, workspace_width, workspace_height } from "./scaling.ts"
 
 
 const OLD_AGS = AGS_DIR.replace("/ags3", "/ags")
@@ -135,7 +137,79 @@ const reserveSpace = async () => {
     ]).catch(print)
 }
 
-const Bar = () => {
+const Bar = (gdkmonitor?: any, idx = 0) => {
+    const rightBox = Box({ hpack: "start", className: "yorha-right" })
+    const settingsButton = Button({
+        hpack: "end",
+        hexpand: true,
+        className: "settings-button",
+        child: Icon({ size: top_icon_size, icon: assetsDir() + "/yorha.png" }),
+        setup: (self: any) => {
+            self.connect("enter-notify-event", () => {
+                self.toggleClassName("hover", true)
+                rightBox.toggleClassName("hover", true)
+            })
+            self.connect("leave-notify-event", () => {
+                self.toggleClassName("hover", false)
+                rightBox.toggleClassName("hover", false)
+            })
+        },
+        onClicked: () => { try { toggleSettings() } catch (e) { print("settings toggle:", e) } },
+    })
+    const top = Box({
+        vertical: true,
+        hexpand: false,
+        className: "top",
+        css: `min-width: ${SCREEN_WIDTH}px;`,
+        children: [
+            Box({
+                spacing: top_spacing,
+                hpack: "fill",
+                children: [
+                    Scrollable({
+                        css: `min-width: ${workspace_width}px; min-height: ${workspace_height}px;`,
+                        hscroll: "automatic",
+                        vscroll: "never",
+                        className: "workspace-scrollable",
+                        child: Workspaces({ jap: true }),
+                    }),
+                    settingsButton,
+                    rightBox,
+                ],
+            }),
+            NierBorder({ className: "under-workspaces" }),
+        ],
+        setup: (self: any) => timeout(1000, async () => {
+            top_bar_height = self.get_allocation().height + 8
+            while (true) {
+                await reserveSpace()
+                await new Promise(r => timeout(5000, r))
+            }
+        }),
+    })
+    Window({
+        name: idx === 0 ? "bottombar" : `bottombar-${idx}`,
+        className: "bar",
+        margin: [0, 0],
+        gdkmonitor,
+        anchor: Anchor.BOTTOM | Anchor.LEFT | Anchor.RIGHT,
+        exclusivity: Exclusivity.IGNORE,
+        layer: Layer.BOTTOM,
+        child: NierBorder({ className: "bottombar", y_axis: true }),
+    })
+    return Window({
+        name: idx === 0 ? "bar" : `bar-${idx}`,
+        className: "bar",
+        margin: [0, 0],
+        gdkmonitor,
+        anchor: Anchor.TOP | Anchor.LEFT | Anchor.RIGHT,
+        exclusivity: Exclusivity.IGNORE,
+        layer: Layer.BOTTOM,
+        child: Box({ css: "margin-top: 10px;", children: [top] }),
+    })
+}
+
+const BarII = (gdkmonitor?: any, idx = 0) => {
     const settingsBtn = SpinningLogo({
         iconPath: `${assetsDir()}/yorha.png`,
         size: 24,                           // fits inside the frame-height button
@@ -182,9 +256,10 @@ const Bar = () => {
     })
 
     return Window({
-        name: "bar",
+        name: idx === 0 ? "bar" : `bar-${idx}`,
         className: "bar",
         margin: [0, 0],
+        gdkmonitor,
         anchor: Anchor.TOP | Anchor.LEFT | Anchor.RIGHT,
         exclusivity: Exclusivity.IGNORE,
         layer: Layer.BOTTOM,
@@ -192,6 +267,8 @@ const Bar = () => {
     })
 }
 
+let topbarStyle = "original"
+try { topbarStyle = readFile(`${YORHA_DIR}/.topbar_style`).trim() } catch {}
 
 let pendingTarget: string | null = null
 
@@ -297,7 +374,12 @@ App.start({
         })
 
         // windows - bg_settings has to come before settings (settings shows/hides it)
-        Bar()
+        const display = Gdk.Display.get_default()!
+        const nMon = display.get_n_monitors()
+        for (let i = 0; i < nMon; i++) {
+            const mon = display.get_monitor(i)
+            if (topbarStyle === "custom") { BarII(mon, i) } else { Bar(mon, i) }
+        }
         WsAnimWindow()
         PlayerWindow()
         NotificationsWindow()

@@ -5,3 +5,21 @@
 .bottombar {
   margin-bottom: 65px;
 }
+
+.nier-border-icon {
+  font-size: 110px;
+}
+
+.workspace-scrollable scrollbar {
+  min-width: 0;
+  min-height: 0;
+  background: transparent;
+  border: none;
+  opacity: 0;
+}
+
+.workspace-scrollable scrollbar slider {
+  min-width: 0;
+  min-height: 0;
+  background: transparent;
+}

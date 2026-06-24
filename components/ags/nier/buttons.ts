@@ -245,6 +245,7 @@ export interface NierLongButtonProps {
     containerClassName?: string
     label?: string
     label_prefix?: string
+    containerSetup?: (self: any) => void
     passedOnHoverLost?: (self: any) => Promise<void>
     passedOnHover?: (self: any) => Promise<void>
     [key: string]: any
@@ -256,12 +257,14 @@ export const NierLongButton = ({
     containerClassName = "",
     label = "",
     label_prefix = "■",
+    containerSetup = (_self: any) => {},
     passedOnHoverLost = async (_self: any) => {},
     passedOnHover = async (_self: any) => {},
     ...props
 }: NierLongButtonProps) =>
     Box({
         className: `nier-long-button-container ${containerClassName}`,
+        setup: containerSetup,
         children: [
             Icon({
                 icon: assetsDir() + "/nier-pointer.svg",

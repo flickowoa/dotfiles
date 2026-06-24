@@ -146,7 +146,7 @@ export const RailTab = ({
     apply()
 
     const unsub = dark.subscribe(apply)
-    const activeTimer = getActive ? interval(200, () => {
+    const activeTimer = getActive ? interval(1000, () => {
         const a = !!getActive()
         if (a !== isActive) { isActive = a; apply() }
     }) : null

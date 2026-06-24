@@ -1,4 +1,4 @@
-import { execAsync, interval } from "astal"
+import { execAsync, interval, timeout } from "astal"
 import { arradd, arrremove, hasclass, setclasses, assetsDir, SCREEN_WIDTH, dark } from "../env.ts"
 import { NierLongButton, NierButtonGroup } from "../nier/buttons.ts"
 import { Box, Button, Label, DrawingArea } from "../widget.ts"
@@ -68,18 +68,18 @@ export const WorkspaceTiles = () => {
     return tile
 }
 
-const int_to_string = (i: number): string => {
+const int_to_string = (i: number, jap = true): string => {
     switch (i) {
-        case 1: return "ONE"
-        case 2: return "TWO"
-        case 3: return "THREE"
-        case 4: return "FOUR"
-        case 5: return "FIVE"
-        case 6: return "SIX"
-        case 7: return "SEVEN"
-        case 8: return "EIGHT"
-        case 9: return "NINE"
-        case 10: return "TEN"
+        case 1:  return jap ? "いち" : "ONE"
+        case 2:  return jap ? "に" : "TWO"
+        case 3:  return jap ? "さん" : "THREE"
+        case 4:  return jap ? "よん" : "FOUR"
+        case 5:  return jap ? "ご" : "FIVE"
+        case 6:  return jap ? "ろく" : "SIX"
+        case 7:  return jap ? "なな" : "SEVEN"
+        case 8:  return jap ? "はち" : "EIGHT"
+        case 9:  return jap ? "きゅう" : "NINE"
+        case 10: return jap ? "じゅう" : "TEN"
         default: return `${i}`
     }
 }
@@ -87,7 +87,7 @@ const int_to_string = (i: number): string => {
 let HOVERING = false
 let REALLY_HOVERING = false
 
-export const Workspaces = () =>
+export const Workspaces = ({ jap = false }: { jap?: boolean } = {}) =>
     NierButtonGroup({
         horizontal: true,
         min_scale: SCREEN_WIDTH,
@@ -96,7 +96,8 @@ export const Workspaces = () =>
             NierLongButton({
                 className: "workspace-button",
                 containerClassName: `workspace-button-container workspace-button-${i}`,
-                label: int_to_string(i),
+                label: int_to_string(i, jap),
+                css: "min-width: 150px;",
                 onClicked: () => { execAsync(`hyprctl dispatch workspace ${i}`) },
 
                 passedOnHover: async (self: any) => {
@@ -139,33 +140,32 @@ export const Workspaces = () =>
                     }
                 },
 
-                // hook into active workspace changes
-                setup: (self: any) => {
-                    // self is the inner Button, parent is the container box - hook
-                    // the container, timeout just to grab its reference
-                    import("astal").then(({ timeout }) => timeout(1, () => {
-                        const container = self.parent
+                containerSetup: (container: any) => {
+                    timeout(1, () => {
                         hyprland.connect("notify::focused-workspace", () => {
                             const activeId = hyprland.focusedWorkspace?.id ?? -1
+                            const kids = container.get_children()
+                            const pointerIcon = kids[0]
+                            const btn = kids[1]
                             if (!hasclass(container, `workspace-button-${activeId}`)) {
                                 arrremove(container, "active-on-hold")
                                 arrremove(container, "active-no-hover-on-hold")
                                 arrremove(container, "active")
                                 arrremove(container, "active-no-hover")
-                                container.children[0].icon = assetsDir() + "/nier-pointer.svg"
+                                if (pointerIcon) pointerIcon.icon = assetsDir() + "/nier-pointer.svg"
                             } else {
-                                if (!hasclass(container.children[1], "nier-long-button-hover")) {
+                                if (!hasclass(btn, "nier-long-button-hover")) {
                                     arradd(container, "active-no-hover")
                                 } else {
-                                    arrremove(container.children[1], "nier-long-button-hover")
+                                    arrremove(btn, "nier-long-button-hover")
                                     arradd(container, "active")
                                 }
-                                setTimeout(() => {
-                                    container.children[0].icon = assetsDir() + "/nier-pointer-select.svg"
-                                }, 300)
+                                timeout(300, () => {
+                                    if (pointerIcon) pointerIcon.icon = assetsDir() + "/nier-pointer-select.svg"
+                                })
                             }
                         })
-                    }))
+                    })
                 },
             })
         ),

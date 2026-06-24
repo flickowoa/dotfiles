@@ -34,11 +34,16 @@
 .workspace-button {
   margin-bottom: 10px;
   transition: border 0.3s cubic-bezier(0.15, 0.79, 0, 1);
+  label {
+    font-size: 1.5rem;
+  }
 }
 
 .workspace-button-container {
   .nier-long-button-hover-icon {
     margin-bottom: 10px;
+    margin-left: -25px;
+    margin-right: 0;
   }
   .nier-long-button {
     transition: margin 0.1s cubic-bezier(0.15, 0.79, 0, 1);
