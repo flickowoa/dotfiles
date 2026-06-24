@@ -4,6 +4,7 @@ set -e
 REPO="https://github.com/ARCANGEL0/yorha-dotfiles.git"
 BRANCH="hyprland-yorha"
 TARGET="$HOME/.config/hypr/themes/yorha"
+mkdir -p ~/.config/hypr/themes
 if [ -d .git ]; then
     cp -rf . "$TARGET"
 else
