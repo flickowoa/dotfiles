@@ -233,6 +233,17 @@ bind = , escape, exec, $yorha/scripts/overkill exit
 submap = reset
 EOF
 
+echo ""
+echo "SELECT WHICH TRAY TO INSTALL:"
+echo " [1] ORIGINAL (Keeps the original topbar with workspace buttons)"
+echo " [2] Custom bar (System monitors, Wifi, Weather, Storage)."
+printf ">> "
+read topbar_choice
+
+if [ "$topbar_choice" = "2" ]; then
+    sed -i 's/let topbarStyle = "original"/let topbarStyle = "custom"/' "$THEME_DIR/components/ags/app.ts"
+fi
+
 pkill waybar
 pkill dunst
 pkill mako
@@ -241,5 +252,5 @@ awww-daemon
 udiskie
 hyprctl setcursor nier_cursors 48
 echo "Reloading Hyprctl and starting AGS in background (log -> /tmp/ags-yorha.log)"
-hyprctl reload 
+hyprctl reload
 echo "Installation finished. Check /tmp/ags-yorha.log for runtime errors :)"
